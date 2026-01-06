@@ -1,111 +1,156 @@
-const fiats = ["EUR", "USD", "GBP", "MAD", "CAD", "CHF", "JPY", "AED"];
-const cryptos = [
-    {id:"bitcoin", symbol:"BTC"}, 
-    {id:"ethereum", symbol:"ETH"}, 
-    {id:"solana", symbol:"SOL"}
-];
+const translations = {
+    fr: {
+        "nav-dash": "Marchés", "nav-about": "À Propos", "nav-news": "Analyses",
+        "calc-title": "Convertisseur Universel", "init-text": "Initialisation...",
+        "aff-title": "Meilleur taux d'exécution", "modal-title": "Taux prêt !",
+        "modal-desc": "Partagez ce résultat ou profitez de l'offre partenaire pour économiser sur vos frais.",
+        "buy-crypto": "Vérifier sur Binance", "buy-metal": "Investir via Revolut", "buy-fiat": "Ouvrir un compte Wise",
+        "about-title": "Transparence FlashDevise", "news-title": "Analyses & Flux News",
+        "legal-title": "Note Légale",
+        "legal-note": "Outil de consultation gratuit. Les taux sont fournis à titre informatif. En utilisant nos liens partenaires, vous soutenez ce projet sans aucun surcoût pour vous.",
+        "about-desc": "Terminal indépendant fournissant des données neutres. Nous aidons les utilisateurs à identifier le taux de change réel pour minimiser les frais de transaction bancaires."
+    },
+    en: {
+        "nav-dash": "Markets", "nav-about": "About", "nav-news": "Analysis",
+        "calc-title": "Universal Converter", "init-text": "Initializing...",
+        "aff-title": "Best Execution Rate", "modal-title": "Rate Ready!",
+        "modal-desc": "Share this result or use our partner offer to save on transfer fees.",
+        "buy-crypto": "Check on Binance", "buy-metal": "Invest via Revolut", "buy-fiat": "Open Wise Account",
+        "about-title": "FlashDevise Transparency", "news-title": "Market Analysis & News",
+        "legal-title": "Legal Disclaimer",
+        "legal-note": "Free consultation tool. Rates are for informational purposes only. By using our partner links, you support this project at no extra cost to you.",
+        "about-desc": "Independent terminal providing neutral data. We help users identify the real exchange rate to minimize bank transaction fees."
+    }
+};
 
-// REFORMULATION IA
-function reformulate(title, source) {
-    const variants = [
-        `L'analyse de "${title}" via ${source} confirme une volatilité élevée sur les marchés ce trimestre.`,
-        `Selon ${source}, l'actualité "${title}" pourrait impacter les taux de change à court terme.`,
-        `Focus FlashDevise : "${title}" (${source}) incite les traders à la prudence technique.`
-    ];
-    return variants[Math.floor(Math.random() * variants.length)];
+const logos = {
+    wise: "https://upload.wikimedia.org/wikipedia/commons/b/be/Wise_Logo.svg",
+    binance: "https://upload.wikimedia.org/wikipedia/commons/e/e8/Binance_Logo.svg",
+    revolut: "https://upload.wikimedia.org/wikipedia/commons/e/e4/Revolut_logo.svg"
+};
+
+let currentLang = localStorage.getItem('preferredLang') || 'fr';
+const cryptos = [{id:"bitcoin", symbol:"BTC"}, {id:"ethereum", symbol:"ETH"}, {id:"solana", symbol:"SOL"}];
+const metals = [{id:"gold", symbol:"XAU"}, {id:"silver", symbol:"XAG"}];
+
+function updateAffiliateInfo(toCurrency) {
+    const mainBtnText = document.getElementById('mainAffText');
+    const mainBtnLogo = document.getElementById('mainAffLogo');
+    const mainBtnLink = document.getElementById('mainAffiliateLink');
+    const modalBtnText = document.getElementById('modalAffText');
+    const modalBtnLogo = document.getElementById('modalAffLogo');
+    const modalBtnLink = document.getElementById('modalAffiliateLink');
+
+    let text, logo, link;
+
+    if (cryptos.find(c => c.symbol === toCurrency)) {
+        text = translations[currentLang]["buy-crypto"];
+        logo = logos.binance;
+        link = "https://www.binance.com";
+    } else if (metals.find(m => m.symbol === toCurrency)) {
+        text = translations[currentLang]["buy-metal"];
+        logo = logos.revolut;
+        link = "https://www.revolut.com";
+    } else {
+        text = translations[currentLang]["buy-fiat"];
+        logo = logos.wise;
+        link = "https://wise.com";
+    }
+
+    [mainBtnText, modalBtnText].forEach(el => el.innerText = text);
+    [mainBtnLogo, modalBtnLogo].forEach(el => el.src = logo);
+    [mainBtnLink, modalBtnLink].forEach(el => el.href = link);
 }
 
-// NEWS + TICKER
-async function fetchNews() {
-    const container = document.getElementById('news-container');
-    const ticker = document.getElementById('ticker');
-    
-    // Fallback news pour indexation immédiate
-    const fallbacks = [
-        { title: "Le marché des devises attend les chiffres de l'inflation", source: "EcoLive" },
-        { title: "Bitcoin maintient son support stratégique", source: "CryptoPro" },
-        { title: "L'Euro se stabilise face au dollar ce matin", source: "ForexNet" },
-        { title: "Nouveaux records d'échanges sur le réseau Solana", source: "Web3" }
-    ];
+function showModal() { document.getElementById('shareModal').style.display = 'flex'; }
+function closeModal() { document.getElementById('shareModal').style.display = 'none'; }
 
-    const renderNews = (posts) => {
-        container.innerHTML = posts.map(p => `
-            <div class="glass p-6 rounded-2xl border border-white/5 hover:border-indigo-500/30 transition">
-                <span class="text-[8px] font-bold text-indigo-400 uppercase">${p.source.title || p.source}</span>
-                <h4 class="text-[11px] font-bold mt-2 leading-tight h-8 overflow-hidden">${p.title}</h4>
-                <p class="text-[10px] text-slate-500 mt-3 italic">${reformulate(p.title, p.source.title || p.source)}</p>
-            </div>
-        `).join('');
-    };
-
-    renderNews(fallbacks);
-
-    try {
-        const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://cryptopanic.com/api/v1/posts/?public=true')}`);
-        const data = await res.json();
-        const posts = JSON.parse(data.contents).results.slice(0, 4);
-        renderNews(posts);
-        ticker.innerText = posts.map(p => `${p.title.toUpperCase()} • `).join('');
-    } catch (e) { console.log("Live News Offline"); }
-}
-
-// CONVERTISSEUR
 async function convert() {
-    const amount = parseFloat(document.getElementById('amount').value);
+    const amount = document.getElementById('amount').value;
     const from = document.getElementById('fromCurrency').value;
     const to = document.getElementById('toCurrency').value;
     if (!amount) return;
 
+    updateAffiliateInfo(to);
+
     try {
         const res = await fetch(`https://api.exchangerate-api.com/v4/latest/USD`);
         const data = await res.json();
-
-        const getP = async (sym) => {
-            const c = cryptos.find(i => i.symbol === sym);
-            if(c) {
+        const getP = async (s) => {
+            const c = cryptos.find(i => i.symbol === s);
+            if(c){
                 const r = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${c.id}&vs_currencies=usd`);
                 const d = await r.json(); return d[c.id].usd;
             }
-            return 1 / data.rates[sym];
+            return 1 / data.rates[s];
         };
-
         const rate = (await getP(from)) / (await getP(to));
-        document.getElementById('baseText').innerText = `1 ${from} = ${rate.toFixed(4)} ${to}`;
         document.getElementById('resultValue').innerText = (amount * rate).toLocaleString(undefined, {maximumFractionDigits: 2}) + " " + to;
-        document.getElementById('fee-bank').innerText = (amount * 0.035 + 5).toFixed(2) + " €";
-        document.getElementById('fee-flash').innerText = (amount * 0.004).toFixed(2) + " €";
-    } catch(e) {}
+        document.getElementById('baseText').innerText = `1 ${from} = ${rate.toFixed(4)} ${to}`;
+        setTimeout(showModal, 1500);
+    } catch(e) { console.error(e); }
 }
 
-// PARTAGE
-function share(platform) {
-    const amount = document.getElementById('amount').value;
-    const from = document.getElementById('fromCurrency').value;
-    const result = document.getElementById('resultValue').innerText;
-    const text = encodeURIComponent(`📊 FlashDevise 2026 :\nLe meilleur taux pour ${amount} ${from} est de ${result}.\n\nComparez ici : ${window.location.href}`);
-    const url = platform === 'whatsapp' ? `https://api.whatsapp.com/send?text=${text}` : `https://t.me/share/url?url=${window.location.href}&text=${text}`;
-    window.open(url, '_blank');
+async function fetchNews() {
+    const container = document.getElementById('news-container');
+    const ticker = document.getElementById('ticker');
+    try {
+        const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://cryptopanic.com/api/v1/posts/?public=true')}`);
+        const data = await res.json();
+        const posts = JSON.parse(data.contents).results.slice(0, 4);
+        container.innerHTML = posts.map(p => `
+            <div class="glass p-6 rounded-2xl border border-white/5">
+                <span class="text-[8px] font-black text-indigo-500 uppercase">${p.source.title}</span>
+                <h4 class="text-[11px] font-bold mt-2 h-10 overflow-hidden">${p.title}</h4>
+                <a href="${p.url}" target="_blank" class="text-[9px] text-slate-500 mt-4 block font-black hover:text-white transition">Source →</a>
+            </div>
+        `).join('');
+        ticker.innerText = posts.map(p => `${p.title.toUpperCase()} • `).join('');
+    } catch (e) { console.log("News error"); }
 }
 
-// GRAPHIQUE
+function setLanguage(lang) {
+    currentLang = lang;
+    localStorage.setItem('preferredLang', lang);
+    document.querySelectorAll('[data-key]').forEach(el => {
+        const key = el.getAttribute('data-key');
+        if (translations[lang][key]) el.innerText = translations[lang][key];
+    });
+    updateAffiliateInfo(document.getElementById('toCurrency').value);
+}
+
 function updateChart() {
     const from = document.getElementById('fromCurrency').value;
     const to = document.getElementById('toCurrency').value;
+    let symbol = `FX_IDC:${from}${to}`;
+    if (from === "BTC" || to === "BTC") symbol = "BINANCE:BTCUSDT";
+    if (from === "XAU" || to === "XAU") symbol = "OANDA:XAUUSD";
     new TradingView.widget({
-        "autosize": true, "symbol": `FX_IDC:${from}${to}`, "interval": "D", "theme": "dark", "style": "3",
-        "container_id": "tradingview_chart", "locale": "fr", "hide_top_toolbar": true
+        "autosize": true, "symbol": symbol, "interval": "D", "theme": "dark", "style": "3",
+        "container_id": "tradingview_chart", "locale": currentLang, "hide_top_toolbar": true, "backgroundColor": "#05070a"
     });
 }
 
-function init() {
+async function init() {
     const fS = document.getElementById('fromCurrency'), tS = document.getElementById('toCurrency');
-    const all = [...fiats, ...cryptos.map(c => c.symbol)].sort();
+    const res = await fetch(`https://api.exchangerate-api.com/v4/latest/USD`);
+    const data = await res.json();
+    const all = [...Object.keys(data.rates), "BTC", "ETH", "SOL", "XAU", "XAG"].sort();
     all.forEach(s => { fS.add(new Option(s, s)); tS.add(new Option(s, s)); });
     fS.value = "EUR"; tS.value = "USD";
+    setLanguage(currentLang);
     fetchNews(); convert(); updateChart();
 }
 
-document.getElementById('amount').addEventListener('input', convert);
+function share(platform) {
+    const res = document.getElementById('resultValue').innerText;
+    const text = encodeURIComponent(`FlashDevise : Taux de ${res} trouvé. Calculez en direct : `);
+    const url = platform === 'whatsapp' ? `https://api.whatsapp.com/send?text=${text}%20${window.location.href}` : `https://t.me/share/url?url=${window.location.href}&text=${text}`;
+    window.open(url, '_blank');
+}
+
+document.getElementById('amount').addEventListener('change', convert);
 [document.getElementById('fromCurrency'), document.getElementById('toCurrency')].forEach(s => s.addEventListener('change', () => { convert(); updateChart(); }));
+
 init();
 setInterval(fetchNews, 600000);
