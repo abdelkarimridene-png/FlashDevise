@@ -3,109 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terminal V7</title>
+    <title>FlashDevise | Intelligence Marché</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <style>
-        body { background: #05070a; color: white; font-family: sans-serif; }
-        .panel { background: #0f141c; border: 1px solid #1e293b; border-radius: 20px; }
-        .btn-off { opacity: 0.15; filter: grayscale(1); pointer-events: none; transform: scale(0.95); }
-        .btn-on { opacity: 1; filter: grayscale(0); pointer-events: auto; transform: scale(1); border: 2px solid #6366f1; }
-        .chip { width: 24px; height: 24px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: 900; margin-right: 12px; }
+        body { background: #05070a; color: white; font-family: 'Inter', sans-serif; }
+        .glass-card { background: #0f141c; border: 1px solid #1e293b; border-radius: 1rem; height: 100%; }
+        .status-bar { border-top: 1px solid #1e293b; background: #0a0e14; }
     </style>
 </head>
-<body class="p-4 md:p-10">
+<body class="p-4">
 
-    <div class="max-w-md mx-auto">
-        <div class="text-[9px] text-center opacity-20 mb-4 uppercase tracking-[0.5em]">HARDWARE_SYNC_V7</div>
+    <div class="max-w-7xl mx-auto space-y-6">
         
-        <div class="panel p-6 shadow-2xl mb-6">
-            <h1 class="text-center font-black italic mb-8 uppercase text-xl">FLASH<span class="text-indigo-500">DEVISE</span></h1>
+        <header class="flex justify-between items-center py-4 border-b border-white/5">
+            <h1 class="font-black italic text-2xl uppercase">FLASH<span class="text-indigo-500">DEVISE</span></h1>
+            <div class="flex items-center gap-2">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                </span>
+                <span class="text-[10px] font-bold opacity-50 uppercase tracking-widest">Live Analysis Feed</span>
+            </div>
+        </header>
 
-            <input type="number" id="inp-amount" value="1000" class="w-full bg-black/40 border border-white/10 p-4 rounded-xl text-3xl font-bold text-center outline-none mb-4">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             
-            <div class="grid grid-cols-2 gap-3 mb-6">
-                <select id="sel-from" class="bg-slate-800 p-4 rounded-xl border-none font-bold"></select>
-                <select id="sel-to" class="bg-slate-800 p-4 rounded-xl border-none font-bold"></select>
+            <div class="lg:col-span-4 space-y-6">
+                <div class="glass-card p-6">
+                    <div class="flex gap-4 mb-6">
+                        <select id="fromCur" class="flex-1 bg-slate-800 p-3 rounded-lg font-bold border-none outline-none"></select>
+                        <select id="toCur" class="flex-1 bg-slate-800 p-3 rounded-lg font-bold border-none outline-none"></select>
+                    </div>
+                    
+                    <div class="text-center mb-6">
+                        <div id="price-display" class="text-5xl font-black text-indigo-400">0.00</div>
+                        <div id="rate-text" class="text-[10px] opacity-40 uppercase mt-2 font-bold tracking-tighter">Connexion...</div>
+                    </div>
+
+                    <div class="tradingview-widget-container" id="tech-analysis-box">
+                        <div class="tradingview-widget-container__widget"></div>
+                    </div>
+                </div>
             </div>
 
-            <div class="text-center py-6 border-y border-white/5 mb-6">
-                <div id="display-res" class="text-4xl font-black text-indigo-400">---</div>
-                <div id="display-rate" class="text-[10px] opacity-30 mt-2 font-bold uppercase">Calcul...</div>
+            <div class="lg:col-span-8">
+                <div class="glass-card min-h-[500px]" id="main-chart">
+                    </div>
             </div>
 
-            <div class="space-y-3">
-                <a id="btn-wise" href="https://wise.com" target="_blank" class="flex items-center justify-center w-full py-4 bg-white text-black rounded-xl font-black text-[10px] uppercase transition-all btn-on">
-                    <span class="chip bg-[#00B9FF] text-white">W</span> VERS MON COMPTE WISE
-                </a>
-                
-                <a id="btn-binance" href="https://www.binance.com" target="_blank" class="flex items-center justify-center w-full py-4 bg-white text-black rounded-xl font-black text-[10px] uppercase transition-all btn-off">
-                    <span class="chip bg-[#F3BA2F] text-black">B</span> VÉRIFIER SUR BINANCE
-                </a>
-
-                <a id="btn-revolut" href="https://www.revolut.com" target="_blank" class="flex items-center justify-center w-full py-4 bg-white text-black rounded-xl font-black text-[10px] uppercase transition-all btn-off">
-                    <span class="chip bg-black text-white border border-gray-200">R</span> INVESTIR VIA REVOLUT
-                </a>
+            <div class="lg:col-span-12">
+                <div class="glass-card p-6">
+                    <h2 class="text-sm font-bold mb-6 uppercase tracking-widest text-indigo-500">Flux d'actualités mondiales</h2>
+                    <div id="news-feed-container" class="h-[400px]">
+                        </div>
+                </div>
             </div>
-        </div>
-
-        <div class="panel h-64 overflow-hidden shadow-2xl">
-            <div id="chart-area" class="h-full w-full"></div>
         </div>
     </div>
 
     <script>
-        const list = ["EUR", "USD", "GBP", "CHF", "BTC", "ETH", "XAU"];
+        const assets = ["EUR", "USD", "GBP", "CHF", "JPY", "BTC", "ETH", "XAU"];
 
-        function syncButtons(to) {
-            const bW = document.getElementById('btn-wise');
-            const bB = document.getElementById('btn-binance');
-            const bR = document.getElementById('btn-revolut');
+        function loadWidgets(from, to) {
+            const pair = `${from}${to}`;
 
-            // On éteint tout
-            [bW, bB, bR].forEach(btn => {
-                btn.classList.remove('btn-on');
-                btn.classList.add('btn-off');
+            // 1. Analyse Technique (Résumé automatique)
+            document.getElementById('tech-analysis-box').innerHTML = ''; 
+            const techScript = document.createElement('script');
+            techScript.src = "https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js";
+            techScript.async = true;
+            techScript.innerHTML = JSON.stringify({
+                "interval": "1D", "width": "100%", "isTransparent": true, "height": 320,
+                "symbol": `FX_IDC:${pair}`, "showIntervalTabs": true, "locale": "fr", "colorTheme": "dark"
+            });
+            document.getElementById('tech-analysis-box').appendChild(techScript);
+
+            // 2. Graphique Principal
+            document.getElementById('main-chart').innerHTML = '';
+            new TradingView.widget({
+                "autosize": true, "symbol": pair, "interval": "D", "theme": "dark",
+                "style": "3", "locale": "fr", "container_id": "main-chart", "hide_top_toolbar": false
             });
 
-            // On allume le bon
-            if (["BTC", "ETH"].includes(to)) {
-                bB.classList.add('btn-on'); bB.classList.remove('btn-off');
-            } else if (to === "XAU") {
-                bR.classList.add('btn-on'); bR.classList.remove('btn-off');
-            } else {
-                bW.classList.add('btn-on'); bW.classList.remove('btn-off');
-            }
+            // 3. News (Reuters, CNBC, etc.)
+            document.getElementById('news-feed-container').innerHTML = '';
+            const newsScript = document.createElement('script');
+            newsScript.src = "https://s3.tradingview.com/external-embedding/embed-widget-timeline.js";
+            newsScript.async = true;
+            newsScript.innerHTML = JSON.stringify({
+                "feedMode": "symbol", "symbol": `FX_IDC:${pair}`, "colorTheme": "dark",
+                "isTransparent": true, "displayMode": "regular", "width": "100%", "height": 400, "locale": "fr"
+            });
+            document.getElementById('news-feed-container').appendChild(newsScript);
         }
 
-        async function start() {
-            const a = document.getElementById('inp-amount').value;
-            const f = document.getElementById('sel-from').value;
-            const t = document.getElementById('sel-to').value;
-            syncButtons(t);
-
+        async function getLivePrice() {
+            const from = document.getElementById('fromCur').value;
+            const to = document.getElementById('toCur').value;
             try {
-                const r = await fetch(`https://api.exchangerate-api.com/v4/latest/${f}`);
+                const r = await fetch(`https://api.exchangerate-api.com/v4/latest/${from}`);
                 const d = await r.json();
-                const rate = d.rates[t];
-                document.getElementById('display-res').innerText = (a * rate).toLocaleString(undefined, {maximumFractionDigits:2}) + " " + t;
-                document.getElementById('display-rate').innerText = `1 ${f} = ${rate.toFixed(4)} ${t}`;
-                
-                document.getElementById('chart-area').innerHTML = '<div id="tv_ctx" class="h-full"></div>';
-                new TradingView.widget({
-                    "autosize": true, "symbol": `${f}${t}`, "interval": "D", "theme": "dark",
-                    "container_id": "tv_ctx", "style": "3", "backgroundColor": "#05070a", "hide_top_toolbar": true
-                });
+                const rate = d.rates[to];
+                document.getElementById('price-display').innerText = rate.toFixed(4);
+                document.getElementById('rate-text').innerText = `LIVE: 1 ${from} = ${rate} ${to}`;
             } catch(e) {}
         }
 
         window.onload = function() {
-            const s1 = document.getElementById('sel-from'), s2 = document.getElementById('sel-to');
-            list.forEach(c => { s1.add(new Option(c, c)); s2.add(new Option(c, c)); });
-            s1.value = "EUR"; s2.value = "USD";
-            [s1, s2, document.getElementById('inp-amount')].forEach(el => el.onchange = start);
-            start();
-        }
+            const f = document.getElementById('fromCur'), t = document.getElementById('toCur');
+            assets.forEach(a => { f.add(new Option(a, a)); t.add(new Option(a, a)); });
+            f.value = "EUR"; t.value = "USD";
+            
+            const updateAll = () => { getLivePrice(); loadWidgets(f.value, t.value); };
+            [f, t].forEach(el => el.onchange = updateAll);
+            updateAll();
+        };
     </script>
 </body>
 </html>
