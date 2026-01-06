@@ -23,48 +23,39 @@ const translations = {
     }
 };
 
-// CDN Brandfetch pour éviter les blocages d'images
+// Logos complets (Texte + Symbole) via CDN Brandfetch
 const logos = {
-    wise: "https://cdn.brandfetch.io/id9_hS807S/theme/dark/symbol.svg",
-    binance: "https://cdn.brandfetch.io/id_X8m6S6u/theme/dark/symbol.svg",
-    revolut: "https://cdn.brandfetch.io/id_G8jL-vX/theme/dark/symbol.svg"
+    wise: "https://cdn.brandfetch.io/id9_hS807S/theme/dark/logo.svg",
+    binance: "https://cdn.brandfetch.io/id_X8m6S6u/theme/dark/logo.svg",
+    revolut: "https://cdn.brandfetch.io/id_G8jL-vX/theme/dark/logo.svg"
 };
 
-let currentLang = localStorage.getItem('preferredLang') || 'fr';
 const cryptos = [{id:"bitcoin", symbol:"BTC"}, {id:"ethereum", symbol:"ETH"}, {id:"solana", symbol:"SOL"}];
 const metals = [{id:"gold", symbol:"XAU"}, {id:"silver", symbol:"XAG"}];
+let currentLang = localStorage.getItem('preferredLang') || 'fr';
 
 function updateAffiliateInfo(toCurrency) {
     const mainBtnText = document.getElementById('mainAffText');
-    const mainBtnLogo = document.getElementById('mainAffLogo');
-    const mainBtnLink = document.getElementById('mainAffiliateLink');
     const modalBtnText = document.getElementById('modalAffText');
+    const mainBtnLogo = document.getElementById('mainAffLogo');
     const modalBtnLogo = document.getElementById('modalAffLogo');
+    const mainBtnLink = document.getElementById('mainAffiliateLink');
     const modalBtnLink = document.getElementById('modalAffiliateLink');
 
     let text, logo, link;
 
     if (cryptos.find(c => c.symbol === toCurrency)) {
-        text = translations[currentLang]["buy-crypto"];
-        logo = logos.binance;
-        link = "https://www.binance.com";
+        text = translations[currentLang]["buy-crypto"]; logo = logos.binance; link = "https://www.binance.com";
     } else if (metals.find(m => m.symbol === toCurrency)) {
-        text = translations[currentLang]["buy-metal"];
-        logo = logos.revolut;
-        link = "https://www.revolut.com";
+        text = translations[currentLang]["buy-metal"]; logo = logos.revolut; link = "https://www.revolut.com";
     } else {
-        text = translations[currentLang]["buy-fiat"];
-        logo = logos.wise;
-        link = "https://wise.com";
+        text = translations[currentLang]["buy-fiat"]; logo = logos.wise; link = "https://wise.com";
     }
 
     if(mainBtnText) [mainBtnText, modalBtnText].forEach(el => el.innerText = text);
     if(mainBtnLogo) [mainBtnLogo, modalBtnLogo].forEach(el => el.src = logo);
     if(mainBtnLink) [mainBtnLink, modalBtnLink].forEach(el => el.href = link);
 }
-
-function showModal() { document.getElementById('shareModal').style.display = 'flex'; }
-function closeModal() { document.getElementById('shareModal').style.display = 'none'; }
 
 async function convert() {
     const amount = document.getElementById('amount').value;
@@ -86,7 +77,7 @@ async function convert() {
         const rate = (await getP(from)) / (await getP(to));
         document.getElementById('resultValue').innerText = (amount * rate).toLocaleString(undefined, {maximumFractionDigits: 2}) + " " + to;
         document.getElementById('baseText').innerText = `1 ${from} = ${rate.toFixed(4)} ${to}`;
-        setTimeout(showModal, 1500);
+        setTimeout(() => document.getElementById('shareModal').style.display = 'flex', 1500);
     } catch(e) { console.error(e); }
 }
 
@@ -98,9 +89,9 @@ async function fetchNews() {
         const data = await res.json();
         const posts = JSON.parse(data.contents).results.slice(0, 4);
         container.innerHTML = posts.map(p => `
-            <div class="glass p-6 rounded-2xl border border-white/5">
+            <div class="glass p-6 rounded-2xl border border-white/5 hover:border-indigo-500/20 transition">
                 <span class="text-[8px] font-black text-indigo-500 uppercase">${p.source.title}</span>
-                <h4 class="text-[11px] font-bold mt-2 h-10 overflow-hidden">${p.title}</h4>
+                <h4 class="text-[11px] font-bold mt-2 h-10 overflow-hidden text-slate-200">${p.title}</h4>
                 <a href="${p.url}" target="_blank" class="text-[9px] text-slate-500 mt-4 block font-black hover:text-white transition">Source →</a>
             </div>
         `).join('');
@@ -137,8 +128,7 @@ async function init() {
     const all = [...Object.keys(data.rates), "BTC", "ETH", "SOL", "XAU", "XAG"].sort();
     all.forEach(s => { fS.add(new Option(s, s)); tS.add(new Option(s, s)); });
     fS.value = "EUR"; tS.value = "USD";
-    setLanguage(currentLang);
-    fetchNews(); convert(); updateChart();
+    setLanguage(currentLang); fetchNews(); convert(); updateChart();
 }
 
 function share(platform) {
@@ -150,6 +140,7 @@ function share(platform) {
 
 document.getElementById('amount').addEventListener('change', convert);
 [document.getElementById('fromCurrency'), document.getElementById('toCurrency')].forEach(s => s.addEventListener('change', () => { convert(); updateChart(); }));
+function closeModal() { document.getElementById('shareModal').style.display = 'none'; }
 
 init();
 setInterval(fetchNews, 600000);
