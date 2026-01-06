@@ -23,11 +23,11 @@ const translations = {
     }
 };
 
-// Utilisation de sources CDN plus stables pour éviter les blocages
+// Utilisation de Simple Icons (CDN jscdn) - Sources ultra-fiables
 const logos = {
-    wise: "https://cdn.worldvectorlogo.com/logos/wise-6.svg",
-    binance: "https://cdn.worldvectorlogo.com/logos/binance-coin-7.svg",
-    revolut: "https://cdn.worldvectorlogo.com/logos/revolut-2.svg"
+    wise: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/wise.svg",
+    binance: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/binance.svg",
+    revolut: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/revolut.svg"
 };
 
 let currentLang = localStorage.getItem('preferredLang') || 'fr';
@@ -42,23 +42,20 @@ function updateAffiliateInfo(toCurrency) {
     const modalBtnLogo = document.getElementById('modalAffLogo');
     const modalBtnLink = document.getElementById('modalAffiliateLink');
 
-    let text, logo, link, fallback;
+    let text, logo, link;
 
     if (cryptos.find(c => c.symbol === toCurrency)) {
         text = translations[currentLang]["buy-crypto"];
         logo = logos.binance;
         link = "https://www.binance.com";
-        fallback = "https://logo.clearbit.com/binance.com";
     } else if (metals.find(m => m.symbol === toCurrency)) {
         text = translations[currentLang]["buy-metal"];
         logo = logos.revolut;
         link = "https://www.revolut.com";
-        fallback = "https://logo.clearbit.com/revolut.com";
     } else {
         text = translations[currentLang]["buy-fiat"];
         logo = logos.wise;
         link = "https://wise.com";
-        fallback = "https://logo.clearbit.com/wise.com";
     }
 
     [mainBtnText, modalBtnText].forEach(el => el.innerText = text);
@@ -66,8 +63,8 @@ function updateAffiliateInfo(toCurrency) {
 
     [mainBtnLogo, modalBtnLogo].forEach(el => {
         el.src = logo;
-        el.style.filter = "brightness(0) invert(1)"; // Force le blanc pur
-        el.onerror = () => { el.src = fallback; }; // Secours si le SVG ne charge pas
+        el.style.filter = "brightness(0) invert(1)"; // Rend l'icône blanche
+        el.style.width = "16px";
     });
 }
 
@@ -79,9 +76,7 @@ async function convert() {
     const from = document.getElementById('fromCurrency').value;
     const to = document.getElementById('toCurrency').value;
     if (!amount) return;
-
     updateAffiliateInfo(to);
-
     try {
         const res = await fetch(`https://api.exchangerate-api.com/v4/latest/USD`);
         const data = await res.json();
@@ -134,7 +129,6 @@ function updateChart() {
     let symbol = `FX_IDC:${from}${to}`;
     if (from === "BTC" || to === "BTC" || from === "ETH" || to === "ETH") symbol = "BINANCE:BTCUSDT";
     if (from === "XAU" || to === "XAU") symbol = "OANDA:XAUUSD";
-    
     new TradingView.widget({
         "autosize": true, "symbol": symbol, "interval": "D", "theme": "dark", "style": "3",
         "container_id": "tradingview_chart", "locale": currentLang, "hide_top_toolbar": true, "backgroundColor": "#05070a"
