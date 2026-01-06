@@ -23,10 +23,11 @@ const translations = {
     }
 };
 
+// Utilisation de sources CDN plus stables pour éviter les blocages
 const logos = {
-    wise: "https://upload.wikimedia.org/wikipedia/commons/b/be/Wise_Logo.svg",
-    binance: "https://upload.wikimedia.org/wikipedia/commons/e/e8/Binance_Logo.svg",
-    revolut: "https://upload.wikimedia.org/wikipedia/commons/e/e4/Revolut_logo.svg"
+    wise: "https://cdn.worldvectorlogo.com/logos/wise-6.svg",
+    binance: "https://cdn.worldvectorlogo.com/logos/binance-coin-7.svg",
+    revolut: "https://cdn.worldvectorlogo.com/logos/revolut-2.svg"
 };
 
 let currentLang = localStorage.getItem('preferredLang') || 'fr';
@@ -41,30 +42,32 @@ function updateAffiliateInfo(toCurrency) {
     const modalBtnLogo = document.getElementById('modalAffLogo');
     const modalBtnLink = document.getElementById('modalAffiliateLink');
 
-    let text, logo, link;
+    let text, logo, link, fallback;
 
     if (cryptos.find(c => c.symbol === toCurrency)) {
         text = translations[currentLang]["buy-crypto"];
         logo = logos.binance;
         link = "https://www.binance.com";
+        fallback = "https://logo.clearbit.com/binance.com";
     } else if (metals.find(m => m.symbol === toCurrency)) {
         text = translations[currentLang]["buy-metal"];
         logo = logos.revolut;
         link = "https://www.revolut.com";
+        fallback = "https://logo.clearbit.com/revolut.com";
     } else {
         text = translations[currentLang]["buy-fiat"];
         logo = logos.wise;
         link = "https://wise.com";
+        fallback = "https://logo.clearbit.com/wise.com";
     }
 
     [mainBtnText, modalBtnText].forEach(el => el.innerText = text);
     [mainBtnLink, modalBtnLink].forEach(el => el.href = link);
-    
-    // Application du filtre blanc sur les logos dynamiques
+
     [mainBtnLogo, modalBtnLogo].forEach(el => {
         el.src = logo;
-        el.style.filter = "brightness(0) invert(1)";
-        el.style.maxHeight = "16px";
+        el.style.filter = "brightness(0) invert(1)"; // Force le blanc pur
+        el.onerror = () => { el.src = fallback; }; // Secours si le SVG ne charge pas
     });
 }
 
