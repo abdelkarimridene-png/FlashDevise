@@ -3,25 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FlashDevise | Terminal</title>
+    <title>FlashDevise | Terminal Financier</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <style>
         body { font-family: sans-serif; background: #05070a; color: white; margin: 0; }
         .glass { background: rgba(15, 20, 28, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); }
         #shareModal { display: none; background: rgba(0,0,0,0.9); position: fixed; inset: 0; z-index: 100; align-items: center; justify-content: center; }
-        select { cursor: pointer; }
+        
+        /* Simulation de logos sans images */
+        .logo-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 900;
+            color: white;
+            flex-shrink: 0;
+        }
+        .logo-binance { background: #F3BA2F; color: black; }
+        .logo-wise { background: #00B9FF; }
+        .logo-revolut { background: black; border: 1px solid #333; }
     </style>
 </head>
 <body class="p-4">
 
     <header class="max-w-6xl mx-auto flex justify-between py-8">
         <div class="font-black text-xl italic uppercase">FLASH<span class="text-indigo-500">DEVISE</span></div>
-        <div class="text-xs font-bold opacity-50 uppercase tracking-widest">Live Terminal</div>
+        <div class="text-[10px] font-bold opacity-30 uppercase tracking-[0.3em]">No-Image Terminal v2.0</div>
     </header>
 
     <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
         <div class="lg:col-span-4 space-y-6">
+            
             <div class="glass p-8 rounded-[2rem]">
                 <input type="number" id="amount" value="1000" class="w-full bg-transparent text-4xl font-bold text-center mb-6 outline-none text-white">
                 <div class="grid grid-cols-2 gap-4 mb-6">
@@ -29,12 +46,12 @@
                     <select id="toCurrency" class="bg-gray-800 p-3 rounded-xl text-white border-none"></select>
                 </div>
                 <div id="resultValue" class="text-4xl font-black text-center mb-2 text-white">---</div>
-                <div id="baseText" class="text-center text-indigo-400 text-[10px] uppercase font-bold tracking-widest">Initialisation...</div>
+                <div id="baseText" class="text-center text-indigo-400 text-[10px] uppercase font-bold tracking-widest italic">Calcul en cours...</div>
             </div>
 
-            <div class="glass p-6 rounded-[2rem] text-center bg-indigo-500/10">
-                <a id="mainAffiliateLink" href="https://wise.com" target="_blank" class="flex items-center justify-center gap-3 w-full py-4 bg-white text-black rounded-xl font-bold text-sm hover:scale-105 transition-transform">
-                    <img id="mainAffLogo" src="" width="20" height="20" style="display:none;">
+            <div class="glass p-6 rounded-[2rem] text-center bg-indigo-500/5">
+                <a id="mainAffiliateLink" href="#" target="_blank" class="flex items-center justify-center gap-3 w-full py-4 bg-white text-black rounded-xl font-bold text-xs uppercase hover:bg-gray-100 transition-all">
+                    <div id="logoContainer" class="logo-box"></div>
                     <span id="mainAffText">Chargement...</span>
                 </a>
             </div>
@@ -46,41 +63,39 @@
     </main>
 
     <div id="shareModal">
-        <div class="glass p-10 rounded-[2rem] text-center max-w-sm w-full mx-4 border-white/20">
-            <h2 class="text-2xl font-bold mb-6 text-white">Taux Prêt !</h2>
+        <div class="glass p-10 rounded-[2rem] text-center max-w-sm w-full mx-4">
+            <h2 class="text-2xl font-bold mb-6 text-white tracking-tighter">Taux Identifié</h2>
             <a id="modalAffiliateLink" href="#" target="_blank" class="flex items-center justify-center gap-3 w-full py-4 bg-indigo-600 text-white rounded-xl font-bold mb-6">
-                <img id="modalAffLogo" src="" width="20" height="20" class="brightness-0 invert" style="display:none;">
                 <span id="modalAffText">Continuer</span>
             </a>
-            <button onclick="closeModal()" class="text-gray-500 text-xs uppercase font-bold tracking-widest">Fermer</button>
+            <button onclick="closeModal()" class="text-gray-500 text-[10px] uppercase font-bold tracking-widest">Fermer</button>
         </div>
     </div>
 
     <script>
-        // LOGO BASE64 INTEGRES (Noir pour bouton blanc)
-        const icons = {
-            binance: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTE2LjYyNCAxMy45MmwtMi42MTcgMi42MjEtMi42MTEtMi42MjFoNS4yMjh6bS01LjIyOC0zLjg0bDIuNjExLTIuNjIxIDIuNjE3IDIuNjIxaC01LjIyOHpNOS4wMyAxMmwyLjYyMi0yLjYyMyAyLjYyMyAyLjYyMy0yLjYyMyAyLjYyM0w5LjAzIDEyeiIgZmlsbD0iYmxhY2siLz48L3N2Zz4=",
-            wise: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTE1LjQyIDUuMzRsLjcgMi4yMmgtNS4yMkw4LjI3IDEybDMuNDMgNS40aDIuMkwxMC43NCAxMmwyLjYzLTQuNDRoNC40MmwuNyAyLjIyaDIuMkwxOS4yNiA1LjM0aC0zLjg0eiIgZmlsbD0iYmxhY2siLz48L3N2Zz4=",
-            revolut: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTE5LjA4IDIuMzNINC45MmEyLjU5IDIuNTkgMCAwMC0yLjU5IDIuNTl2MTQuMTZhMi41OSAyLjU5IDAgMDAyLjU5IDIuNTloMTQuMTZhMi41OSAyLjU5IDAgMDAyLjU5LTIuNTlWNC45MmEyLjU5IDIuNTkgMCAwMC0yLjU5LTIuNTl6IiBmaWxsPSJibGFjayIvPjwvc3ZnPg=="
-        };
-
         function updateAffiliate(to) {
-            const mainLogo = document.getElementById('mainAffLogo');
+            const container = document.getElementById('logoContainer');
             const mainText = document.getElementById('mainAffText');
-            const modalLogo = document.getElementById('modalAffLogo');
-            const modalText = document.getElementById('modalAffText');
+            const link = document.getElementById('mainAffiliateLink');
+            const modalLink = document.getElementById('modalAffiliateLink');
             
-            let logo, text;
             if (["BTC", "ETH", "SOL"].includes(to)) {
-                logo = icons.binance; text = "Vérifier sur Binance";
+                container.className = "logo-box logo-binance";
+                container.innerText = "B";
+                mainText.innerText = "Vérifier sur Binance";
+                link.href = "https://www.binance.com";
             } else if (to === "XAU") {
-                logo = icons.revolut; text = "Investir via Revolut";
+                container.className = "logo-box logo-revolut";
+                container.innerText = "R";
+                mainText.innerText = "Investir via Revolut";
+                link.href = "https://www.revolut.com";
             } else {
-                logo = icons.wise; text = "Ouvrir un compte Wise";
+                container.className = "logo-box logo-wise";
+                container.innerText = "W";
+                mainText.innerText = "Transférer via Wise";
+                link.href = "https://wise.com";
             }
-
-            [mainLogo, modalLogo].forEach(el => { el.src = logo; el.style.display = "inline-block"; });
-            [mainText, modalText].forEach(el => { el.innerText = text; });
+            modalLink.href = link.href;
         }
 
         function showModal() { document.getElementById('shareModal').style.display = 'flex'; }
@@ -94,7 +109,7 @@
             try {
                 const res = await fetch(`https://api.exchangerate-api.com/v4/latest/${from}`);
                 const data = await res.json();
-                const rate = data.rates[to];
+                const rate = data.rates[to] || 1;
                 document.getElementById('resultValue').innerText = (amount * rate).toLocaleString(undefined, {maximumFractionDigits:2}) + " " + to;
                 document.getElementById('baseText').innerText = `1 ${from} = ${rate.toFixed(4)} ${to}`;
                 setTimeout(showModal, 2500);
@@ -106,7 +121,7 @@
             const to = document.getElementById('toCurrency').value;
             new TradingView.widget({
                 "autosize": true, "symbol": `${from}${to}`, "interval": "D", "theme": "dark",
-                "container_id": "tradingview_chart", "style": "3", "backgroundColor": "#05070a"
+                "container_id": "tradingview_chart", "style": "3", "backgroundColor": "#05070a", "locale": "fr"
             });
         }
 
