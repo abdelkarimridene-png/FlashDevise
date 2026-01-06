@@ -2,7 +2,7 @@ const translations = {
     fr: {
         "nav-dash": "Marchés", "nav-about": "À Propos", "nav-news": "Analyses",
         "calc-title": "Convertisseur Universel", "init-text": "Initialisation...",
-        "aff-title": "Meilleur taux d'exécution", "modal-title": "Taux prêt !",
+        "aff-title": "Meilleure Exécution", "modal-title": "Taux prêt !",
         "modal-desc": "Partagez ce résultat ou profitez de l'offre partenaire pour économiser sur vos frais.",
         "buy-crypto": "Vérifier sur Binance", "buy-metal": "Investir via Revolut", "buy-fiat": "Ouvrir un compte Wise",
         "about-title": "Transparence FlashDevise", "news-title": "Analyses & Flux News",
@@ -13,21 +13,21 @@ const translations = {
     en: {
         "nav-dash": "Markets", "nav-about": "About", "nav-news": "Analysis",
         "calc-title": "Universal Converter", "init-text": "Initializing...",
-        "aff-title": "Best Execution Rate", "modal-title": "Rate Ready!",
+        "aff-title": "Best Execution", "modal-title": "Rate Ready!",
         "modal-desc": "Share this result or use our partner offer to save on transfer fees.",
         "buy-crypto": "Check on Binance", "buy-metal": "Invest via Revolut", "buy-fiat": "Open Wise Account",
         "about-title": "FlashDevise Transparency", "news-title": "Market Analysis & News",
         "legal-title": "Legal Disclaimer",
-        "legal-note": "Free consultation tool. Rates are for informational purposes only. By using our partner links, you support this project at no extra cost to you.",
+        "legal-note": "Free consultation tool. Rates are for informational purposes only. By using our partner links, you support this project at no extra cost for you.",
         "about-desc": "Independent terminal providing neutral data. We help users identify the real exchange rate to minimize bank transaction fees."
     }
 };
 
-// Logos complets (Texte + Symbole) via CDN Brandfetch
+// Logos PNG stables (Wikimedia)
 const logos = {
-    wise: "https://cdn.brandfetch.io/id9_hS807S/theme/dark/logo.svg",
-    binance: "https://cdn.brandfetch.io/id_X8m6S6u/theme/dark/logo.svg",
-    revolut: "https://cdn.brandfetch.io/id_G8jL-vX/theme/dark/logo.svg"
+    wise: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Wise_logo_on_blue.png/512px-Wise_logo_on_blue.png",
+    binance: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Binance_Logo.svg/512px-Binance_Logo.svg.png",
+    revolut: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Revolut_logo.svg/512px-Revolut_logo.svg.png"
 };
 
 const cryptos = [{id:"bitcoin", symbol:"BTC"}, {id:"ethereum", symbol:"ETH"}, {id:"solana", symbol:"SOL"}];
@@ -38,7 +38,7 @@ function updateAffiliateInfo(toCurrency) {
     const mainBtnText = document.getElementById('mainAffText');
     const modalBtnText = document.getElementById('modalAffText');
     const mainBtnLogo = document.getElementById('mainAffLogo');
-    const modalBtnLogo = document.getElementById('modalAffLogo');
+    const modalBtnLogo = document.getElementById('modalBtnLogo');
     const mainBtnLink = document.getElementById('mainAffiliateLink');
     const modalBtnLink = document.getElementById('modalAffiliateLink');
 
@@ -52,9 +52,10 @@ function updateAffiliateInfo(toCurrency) {
         text = translations[currentLang]["buy-fiat"]; logo = logos.wise; link = "https://wise.com";
     }
 
-    if(mainBtnText) [mainBtnText, modalBtnText].forEach(el => el.innerText = text);
-    if(mainBtnLogo) [mainBtnLogo, modalBtnLogo].forEach(el => el.src = logo);
-    if(mainBtnLink) [mainBtnLink, modalBtnLink].forEach(el => el.href = link);
+    if(mainBtnText) [mainBtnText, modalBtnText].forEach(el => { if(el) el.innerText = text; });
+    if(mainBtnLogo) mainBtnLogo.src = logo;
+    if(modalBtnLogo) modalBtnLogo.src = logo;
+    if(mainBtnLink) [mainBtnLink, modalBtnLink].forEach(el => { if(el) el.href = link; });
 }
 
 async function convert() {
@@ -89,10 +90,10 @@ async function fetchNews() {
         const data = await res.json();
         const posts = JSON.parse(data.contents).results.slice(0, 4);
         container.innerHTML = posts.map(p => `
-            <div class="glass p-6 rounded-2xl border border-white/5 hover:border-indigo-500/20 transition">
+            <div class="glass p-6 rounded-2xl border border-white/5 hover:border-indigo-500/20 transition cursor-pointer">
                 <span class="text-[8px] font-black text-indigo-500 uppercase">${p.source.title}</span>
                 <h4 class="text-[11px] font-bold mt-2 h-10 overflow-hidden text-slate-200">${p.title}</h4>
-                <a href="${p.url}" target="_blank" class="text-[9px] text-slate-500 mt-4 block font-black hover:text-white transition">Source →</a>
+                <a href="${p.url}" target="_blank" class="text-[9px] text-slate-500 mt-4 block font-black hover:text-white transition">VOIR L'ARTICLE →</a>
             </div>
         `).join('');
         ticker.innerText = posts.map(p => `${p.title.toUpperCase()} • `).join('');
