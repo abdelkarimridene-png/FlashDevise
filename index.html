@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>FlashDevise | Convertisseur & Terminal Financier Temps Réel</title>
-    <meta name="description" content="Convertissez vos devises instantanément avec FlashDevise. Taux de change en direct, cryptos, métaux et graphiques TradingView.">
+    <title>FlashDevise | Terminal Financier & Convertisseur Temps Réel</title>
+    <meta name="description" content="Accédez aux taux de change réels, cryptos et métaux. Analyses de marché en direct et graphiques TradingView.">
     
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="shortcut icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
 
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1514465539874199" crossorigin="anonymous"></script>
 
@@ -20,13 +21,21 @@
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #05070a; color: white; scroll-behavior: smooth; }
         .glass { background: rgba(15, 20, 28, 0.95); border: 1px solid rgba(255, 255, 255, 0.08); }
-        select { background-color: #1a1f26 !important; color: white !important; border: 1px solid rgba(255,255,255,0.1) !important; padding: 12px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; font-size: 13px; outline: none; }
-        select:focus { border-color: #6366f1 !important; }
+        
+        /* Selecteurs optimisés */
+        select { background-color: #1a1f26 !important; color: white !important; border: 1px solid rgba(255,255,255,0.1) !important; padding: 14px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; font-size: 13px; appearance: none; }
+        
+        /* News & Sentiment */
+        .news-card { transition: all 0.3s ease; background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%); }
+        .news-card:hover { transform: translateY(-5px); border-color: rgba(99, 102, 241, 0.4); background: rgba(255,255,255,0.06); }
+        .sentiment-up { color: #10b981; background: rgba(16, 185, 129, 0.1); }
+        .sentiment-down { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
+
         @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
         .animate-marquee { display: inline-block; animation: marquee 40s linear infinite; white-space: nowrap; }
         #shareModal { display: none; background: rgba(0,0,0,0.92); backdrop-filter: blur(10px); }
-        .lang-btn { filter: grayscale(100%); transition: all 0.3s ease; }
-        .lang-btn:hover, .lang-btn.active { filter: grayscale(0%); transform: scale(1.1); }
+        .lang-btn { filter: grayscale(100%); transition: all 0.3s ease; opacity: 0.6; }
+        .lang-btn:hover, .lang-btn.active { filter: grayscale(0%); opacity: 1; transform: scale(1.1); }
     </style>
 </head>
 <body class="p-4 md:p-8">
@@ -40,44 +49,37 @@
         </nav>
         
         <div class="flex gap-4 items-center bg-white/5 px-4 py-2 rounded-full border border-white/10">
-            <button onclick="setLanguage('fr')" class="lang-btn flex items-center gap-2 group">
-                <img src="https://flagcdn.com/w40/fr.png" width="20" alt="FR" class="rounded-full">
-                <span class="text-[10px] font-black group-hover:text-white text-slate-500">FR</span>
+            <button onclick="setLanguage('fr')" class="lang-btn flex items-center gap-2">
+                <img src="https://flagcdn.com/w40/fr.png" width="20" class="rounded-full shadow-sm">
+                <span class="text-[10px] font-black">FR</span>
             </button>
             <div class="w-[1px] h-4 bg-white/10"></div>
-            <button onclick="setLanguage('en')" class="lang-btn flex items-center gap-2 group">
-                <img src="https://flagcdn.com/w40/gb.png" width="20" alt="EN" class="rounded-full">
-                <span class="text-[10px] font-black group-hover:text-white text-slate-500">EN</span>
+            <button onclick="setLanguage('en')" class="lang-btn flex items-center gap-2">
+                <img src="https://flagcdn.com/w40/gb.png" width="20" class="rounded-full shadow-sm">
+                <span class="text-[10px] font-black">EN</span>
             </button>
         </div>
     </header>
 
-    <div class="max-w-[1400px] mx-auto mb-10 flex justify-center min-h-[90px]">
-        <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1514465539874199" data-ad-slot="8412098550"></ins>
-        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-    </div>
-
     <main id="dashboard" class="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
         <div class="lg:col-span-4 space-y-6">
             <div class="glass p-8 rounded-[2.5rem] border-indigo-500/10 shadow-2xl">
-                <h2 class="text-[10px] font-black uppercase text-slate-500 mb-8 tracking-widest text-center" data-key="calc-title">Convertisseur</h2>
+                <h2 class="text-[10px] font-black uppercase text-slate-500 mb-8 tracking-widest text-center" data-key="calc-title">Convertisseur Universel</h2>
                 <div class="space-y-6">
                     <input type="number" id="amount" value="1000" class="w-full bg-black/40 border border-white/10 p-5 rounded-2xl text-3xl font-black text-center outline-none focus:border-indigo-500/50 transition-all">
-                    
-                    <div class="space-y-4">
+                    <div class="space-y-3">
                         <select id="fromCurrency"></select>
                         <select id="toCurrency"></select>
                     </div>
-
                     <div class="pt-8 border-t border-white/5 text-center">
                         <div id="resultValue" class="text-5xl font-black mb-2 tracking-tighter text-white">---</div>
-                        <div id="baseText" class="text-[10px] text-indigo-400 font-bold uppercase tracking-widest mb-6" data-key="init-text">Chargement...</div>
+                        <div id="baseText" class="text-[10px] text-indigo-400 font-bold uppercase tracking-widest" data-key="init-text">Chargement...</div>
                     </div>
                 </div>
             </div>
 
-            <div class="glass p-8 rounded-[2.5rem] bg-indigo-500/5 text-center border border-white/5">
-                <h3 class="text-[10px] font-black text-indigo-300 uppercase tracking-widest mb-4" data-key="aff-title">Partenaire</h3>
+            <div class="glass p-8 rounded-[2.5rem] bg-indigo-500/5 border border-white/5 text-center">
+                <h3 class="text-[10px] font-black text-indigo-300 uppercase tracking-widest mb-4" data-key="aff-title">Meilleure Exécution</h3>
                 <a id="mainAffiliateLink" href="#" target="_blank" class="flex items-center justify-center gap-3 w-full py-4 bg-white text-black text-[11px] font-black uppercase rounded-xl hover:bg-indigo-50 transition shadow-lg px-6">
                     <div id="mainAffIcon"></div>
                     <span id="mainAffText">Chargement...</span>
@@ -89,44 +91,52 @@
             <div class="glass rounded-[2.5rem] overflow-hidden h-[540px] border border-white/5 relative">
                 <div id="tradingview_chart" class="h-full"></div>
                 <div class="absolute bottom-0 w-full bg-black/80 backdrop-blur-md py-3 border-t border-white/5 overflow-hidden">
-                    <div id="ticker" class="animate-marquee text-[9px] font-bold text-slate-500 uppercase tracking-widest">FLUX LIVE • MARCHÉS MONDIAUX • </div>
+                    <div id="ticker" class="animate-marquee text-[9px] font-bold text-slate-500 uppercase tracking-widest italic">SYNCHRONISATION DES FLUX FINANCIERS...</div>
                 </div>
             </div>
         </div>
     </main>
 
-    <section id="about" class="max-w-[1400px] mx-auto mt-24 px-4">
-        <div class="glass p-10 md:p-16 rounded-[3rem] border border-white/10">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                <div>
-                    <h2 class="text-3xl font-black uppercase mb-6" data-key="about-title">Transparence</h2>
-                    <p class="text-slate-400 text-sm leading-relaxed" data-key="about-desc">Terminal indépendant fournissant des données neutres.</p>
-                </div>
-                <div class="bg-white/5 p-8 rounded-[2.5rem] border border-white/5 text-center">
-                    <h3 class="text-xs font-black uppercase text-indigo-400 mb-4" data-key="legal-title">Note Légale</h3>
-                    <p class="text-[10px] text-slate-500 leading-loose uppercase font-bold" data-key="legal-note">Taux à titre informatif.</p>
-                    <a href="politique.html" class="inline-block mt-4 text-[9px] text-indigo-500 hover:text-white uppercase font-bold tracking-widest">Politique de Confidentialité</a>
-                </div>
+    <section id="news" class="max-w-[1400px] mx-auto mt-24 pb-20 px-4">
+        <div class="flex justify-between items-end mb-10">
+            <div>
+                <h3 class="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-500 mb-2" data-key="news-title">Analyses & Flux News</h3>
+                <p class="text-2xl font-black uppercase italic tracking-tighter">Market Intelligence</p>
+            </div>
+            <div class="flex gap-2 items-center">
+                <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Live Connection</span>
             </div>
         </div>
+        <div id="news-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
     </section>
 
-    <section id="news" class="max-w-[1400px] mx-auto mt-24 pb-20 px-4">
-        <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-8 italic" data-key="news-title">Analyses & Flux News</h3>
-        <div id="news-container" class="grid grid-cols-1 md:grid-cols-4 gap-6"></div>
-    </section>
+    <footer id="about" class="max-w-[1400px] mx-auto py-20 border-t border-white/5">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div>
+                <h2 class="text-3xl font-black uppercase mb-6" data-key="about-title">Transparence</h2>
+                <p class="text-slate-400 text-sm leading-relaxed" data-key="about-desc">Terminal indépendant fournissant des données neutres.</p>
+            </div>
+            <div class="bg-white/5 p-8 rounded-[2.5rem] border border-white/5 text-center">
+                <h3 class="text-xs font-black uppercase text-indigo-400 mb-4" data-key="legal-title">Note Légale</h3>
+                <p class="text-[10px] text-slate-500 leading-loose uppercase font-bold mb-6" data-key="legal-note">Outil de consultation gratuit. Les taux sont fournis à titre informatif.</p>
+                <a href="politique.html" class="inline-block text-[9px] text-indigo-500 hover:text-white transition-all uppercase font-bold tracking-widest border-b border-indigo-500/20 pb-1">Politique de Confidentialité</a>
+            </div>
+        </div>
+        <p class="text-center mt-20 text-[9px] font-bold text-slate-600 uppercase tracking-widest">© 2026 FLASHDEVISE • TERMINAL DATA</p>
+    </footer>
 
     <div id="shareModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
         <div class="glass max-w-md w-full p-10 rounded-[3rem] border border-white/20 text-center relative">
-            <button onclick="closeModal()" class="absolute top-6 right-6 text-slate-500 hover:text-white"><i class="fas fa-times text-xl"></i></button>
+            <button onclick="closeModal()" class="absolute top-6 right-6 text-slate-500 hover:text-white"><i class="fas fa-times"></i></button>
             <h2 class="text-2xl font-black mb-2" data-key="modal-title">Taux Prêt !</h2>
-            <p class="text-[11px] text-indigo-400 font-bold uppercase mb-8" data-key="modal-desc">Prêt à être partagé.</p>
+            <p class="text-[11px] text-indigo-400 font-bold uppercase mb-8" data-key="modal-desc">Calcul effectué avec succès.</p>
             <div class="grid grid-cols-2 gap-4 mb-8">
-                <button onclick="share('whatsapp')" class="py-4 bg-[#25D366]/10 text-[#25D366] rounded-2xl font-bold text-[10px] uppercase transition hover:bg-[#25D366]/20"><i class="fab fa-whatsapp mr-2"></i> WhatsApp</button>
-                <button onclick="share('telegram')" class="py-4 bg-[#0088cc]/10 text-[#0088cc] rounded-2xl font-bold text-[10px] uppercase transition hover:bg-[#0088cc]/20"><i class="fab fa-telegram-plane mr-2"></i> Telegram</button>
+                <button onclick="share('whatsapp')" class="py-4 bg-[#25D366]/10 text-[#25D366] rounded-2xl font-bold text-[10px] uppercase">WhatsApp</button>
+                <button onclick="share('telegram')" class="py-4 bg-[#0088cc]/10 text-[#0088cc] rounded-2xl font-bold text-[10px] uppercase">Telegram</button>
             </div>
             <a id="modalAffiliateLink" href="#" target="_blank" class="flex items-center justify-center gap-3 w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase shadow-xl hover:bg-indigo-500 transition px-6">
-                <div id="modalAffIcon"></div><span id="modalAffText">Profiter de l'offre</span>
+                <div id="modalAffIcon"></div><span id="modalAffText">Continuer</span>
             </a>
         </div>
     </div>
