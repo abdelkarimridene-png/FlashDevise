@@ -3,11 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FlashDevise | Terminal Financier</title>
+    
+    <title>FlashDevise | Convertisseur de Devises & Terminal Financier Temps Réel</title>
+    <meta name="description" content="Convertissez vos devises instantanément avec FlashDevise. Taux de change en direct, graphiques TradingView et analyses financières.">
+    <meta name="keywords" content="convertisseur de devises, taux de change, monnaie, dollar en euro, tradingview, forex, flashdevise, terminal financier">
+    <link rel="icon" type="image/png" href="favicon.png">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1514465539874199" crossorigin="anonymous"></script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #05070a; color: white; scroll-behavior: smooth; }
         .glass { background: rgba(15, 20, 28, 0.95); border: 1px solid rgba(255, 255, 255, 0.08); }
@@ -33,7 +41,6 @@
     </header>
 
     <div class="max-w-[1400px] mx-auto mb-10 flex justify-center min-h-[90px]">
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1514465539874199" crossorigin="anonymous"></script>
         <ins class="adsbygoogle"
              style="display:inline-block;width:728px;height:90px"
              data-ad-client="ca-pub-1514465539874199"
@@ -49,7 +56,10 @@
                 <h2 class="text-[10px] font-black uppercase text-slate-500 mb-8 tracking-widest text-center" data-key="calc-title">Convertisseur</h2>
                 <div class="space-y-6">
                     <input type="number" id="amount" value="1000" class="w-full bg-black/40 border border-white/10 p-5 rounded-2xl text-3xl font-black text-center outline-none">
-                    <div class="grid grid-cols-2 gap-4"><select id="fromCurrency"></select><select id="toCurrency"></select></div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <select id="fromCurrency"></select>
+                        <select id="toCurrency"></select>
+                    </div>
                     <div class="pt-8 border-t border-white/5 text-center">
                         <div id="resultValue" class="text-5xl font-black mb-2 tracking-tighter">---</div>
                         <div id="baseText" class="text-[10px] text-indigo-400 font-bold uppercase tracking-widest mb-6" data-key="init-text">Loading...</div>
@@ -86,6 +96,7 @@
                 <div class="bg-white/5 p-8 rounded-[2.5rem] border border-white/5 text-center">
                     <h3 class="text-xs font-black uppercase text-indigo-400 mb-4" data-key="legal-title">Note Légale</h3>
                     <p class="text-[10px] text-slate-500 leading-loose uppercase font-bold" data-key="legal-note">Outil de consultation gratuit. Les taux sont fournis à titre informatif.</p>
+                    <a href="politique.html" class="block mt-4 text-[9px] text-indigo-500 hover:underline">Politique de Confidentialité</a>
                 </div>
             </div>
         </div>
@@ -96,12 +107,16 @@
         <div id="news-container" class="grid grid-cols-1 md:grid-cols-4 gap-6"></div>
     </section>
 
+    <footer class="max-w-[1400px] mx-auto py-10 border-t border-white/5 text-center">
+        <p class="text-[9px] font-bold text-slate-600 uppercase tracking-widest">© 2026 FLASHDEVISE • TOUS DROITS RÉSERVÉS</p>
+    </footer>
+
     <div id="shareModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
         <div class="glass max-w-md w-full p-10 rounded-[3rem] border border-white/20 text-center relative">
             <button onclick="closeModal()" class="absolute top-6 right-6 text-slate-500 hover:text-white"><i class="fas fa-times text-xl"></i></button>
             <h2 class="text-2xl font-black mb-2" data-key="modal-title">Taux Prêt !</h2>
             <p class="text-[11px] text-indigo-400 font-bold uppercase mb-4" data-key="modal-desc">Le taux a été actualisé avec succès.</p>
-            <p class="text-[10px] text-slate-400 leading-relaxed mb-8 px-4" data-key="modal-sub">Partagez ce résultat avec vos proches ou utilisez notre lien partenaire pour réduire vos frais de change dès maintenant.</p>
+            <p class="text-[10px] text-slate-400 leading-relaxed mb-8 px-4" data-key="modal-sub">Partagez ce résultat.</p>
 
             <div class="grid grid-cols-2 gap-4 mb-8">
                 <button onclick="share('whatsapp')" class="py-4 bg-[#25D366]/10 text-[#25D366] rounded-2xl font-bold text-[10px] uppercase transition hover:bg-[#25D366]/20">
