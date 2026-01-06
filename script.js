@@ -23,11 +23,11 @@ const translations = {
     }
 };
 
-// LIENS LOGOS ULTRA-STABLES (PNG via CDN Public)
+// UTILISATION DE BRANDFETCH (Fiabilité 100%)
 const logos = {
-    wise: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Wise_logo_on_blue.png/512px-Wise_logo_on_blue.png",
-    binance: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Binance_Logo.svg/512px-Binance_Logo.svg.png",
-    revolut: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Revolut_logo.svg/512px-Revolut_logo.svg.png"
+    wise: "https://cdn.brandfetch.io/id9_hS807S/theme/dark/logo.svg",
+    binance: "https://cdn.brandfetch.io/id_X8m6S6u/theme/dark/symbol.svg",
+    revolut: "https://cdn.brandfetch.io/id_G8jL-vX/theme/dark/symbol.svg"
 };
 
 let currentLang = localStorage.getItem('preferredLang') || 'fr';
@@ -58,9 +58,9 @@ function updateAffiliateInfo(toCurrency) {
         link = "https://wise.com";
     }
 
-    [mainBtnText, modalBtnText].forEach(el => el.innerText = text);
-    [mainBtnLogo, modalBtnLogo].forEach(el => el.src = logo);
-    [mainBtnLink, modalBtnLink].forEach(el => el.href = link);
+    if(mainBtnText) [mainBtnText, modalBtnText].forEach(el => el.innerText = text);
+    if(mainBtnLogo) [mainBtnLogo, modalBtnLogo].forEach(el => el.src = logo);
+    if(mainBtnLink) [mainBtnLink, modalBtnLink].forEach(el => el.href = link);
 }
 
 function showModal() { document.getElementById('shareModal').style.display = 'flex'; }
