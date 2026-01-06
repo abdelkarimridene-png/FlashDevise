@@ -3,88 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FlashDevise | Terminal</title>
+    <title>FlashDevise | Terminal v4</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <style>
-        body { font-family: 'Courier New', monospace; background: #05070a; color: #00ff00; }
-        .glass { background: rgba(10, 15, 25, 0.98); border: 1px solid #1a2e3a; }
-        
-        /* Badges de secours en texte pur */
-        .badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 3px;
-            font-weight: bold;
-            font-size: 12px;
-            margin-right: 10px;
-            text-transform: uppercase;
-        }
-        .badge-wise { background: #00B9FF; color: white; border: 1px solid #00B9FF; }
-        .badge-binance { background: #F3BA2F; color: black; border: 1px solid #F3BA2F; }
-        .badge-revolut { background: #ffffff; color: black; border: 1px solid #ffffff; }
-        
-        select, input { background: #000 !important; color: #00ff00 !important; border: 1px solid #1a2e3a !important; padding: 8px; }
+        body { font-family: 'Inter', sans-serif; background: #05070a; color: white; }
+        .glass { background: rgba(15, 20, 28, 0.98); border: 1px solid rgba(255, 255, 255, 0.1); }
         .hidden { display: none !important; }
     </style>
 </head>
-<body class="p-4 md:p-10">
+<body class="p-6">
 
     <div class="max-w-4xl mx-auto">
-        <header class="mb-10 border-b border-[#1a2e3a] pb-4">
-            <h1 class="text-xl font-bold tracking-widest">FLASHDEVISE_TERMINAL_v3.0</h1>
+        <header class="mb-10 text-center">
+            <h1 class="font-black italic text-2xl uppercase tracking-tighter">FLASH<span class="text-indigo-500">DEVISE</span></h1>
+            <p class="text-[10px] opacity-30">VERSION_FORCE_CACHE_V4</p>
         </header>
 
-        <div class="grid grid-cols-1 gap-8">
-            <div class="glass p-8 rounded-lg">
-                <div class="flex flex-col md:flex-row gap-4 mb-8">
-                    <input type="number" id="amount" value="1000" class="flex-1 text-2xl font-bold outline-none">
-                    <select id="fromCurrency" class="font-bold"></select>
-                    <select id="toCurrency" class="font-bold"></select>
-                </div>
-                
-                <div class="text-center py-6 border-y border-[#1a2e3a]">
-                    <div id="resultValue" class="text-5xl font-bold text-white mb-2">---</div>
-                    <div id="baseText" class="text-xs opacity-50 uppercase tracking-widest">Awaiting Input...</div>
-                </div>
-
-                <a id="affiliateLink" href="https://wise.com" target="_blank" class="flex items-center justify-center w-full py-5 bg-[#00ff00] text-black rounded-lg font-black text-sm uppercase mt-8 hover:bg-[#00cc00] transition-colors">
-                    <span id="badge-wise" class="badge badge-wise">WISE</span>
-                    <span id="badge-binance" class="badge badge-binance hidden">BINANCE</span>
-                    <span id="badge-revolut" class="badge badge-revolut hidden">REVOLUT</span>
-                    <span id="btnText">Ouvrir un compte Wise</span>
-                </a>
+        <div class="glass p-8 rounded-[2rem] mb-8">
+            <div class="flex flex-col md:flex-row gap-4 mb-8">
+                <input type="number" id="amount" value="1000" class="flex-1 bg-white/5 border border-white/10 p-4 rounded-xl text-2xl font-bold outline-none">
+                <select id="fromCurrency" class="bg-slate-800 p-4 rounded-xl font-bold border-none text-white"></select>
+                <select id="toCurrency" class="bg-slate-800 p-4 rounded-xl font-bold border-none text-white"></select>
+            </div>
+            
+            <div class="text-center py-4 border-y border-white/5">
+                <div id="resultValue" class="text-5xl font-black text-indigo-400 mb-2">---</div>
+                <div id="baseText" class="text-[10px] font-bold opacity-40 uppercase tracking-widest">Calcul...</div>
             </div>
 
-            <div class="glass h-[400px] rounded-lg overflow-hidden border border-[#1a2e3a]">
-                <div id="tradingview_chart" class="h-full w-full"></div>
-            </div>
+            <a id="affiliateLink" href="https://wise.com" target="_blank" class="flex items-center justify-center w-full py-5 bg-white text-black rounded-2xl font-black text-sm uppercase mt-8">
+                <span id="icon-wise" class="mr-3 text-xl">🔵</span>
+                <span id="icon-binance" class="mr-3 text-xl hidden">🟡</span>
+                <span id="icon-revolut" class="mr-3 text-xl hidden">⚪</span>
+                <span id="btnText">Ouvrir un compte Wise</span>
+            </a>
+        </div>
+
+        <div class="glass h-[400px] rounded-[2rem] overflow-hidden">
+            <div id="tradingview_chart" class="h-full w-full"></div>
         </div>
     </div>
 
     <script>
         const coins = ["EUR", "USD", "GBP", "CHF", "BTC", "ETH", "XAU"];
 
-        function updateAffiliate(to) {
-            const bWise = document.getElementById('badge-wise');
-            const bBinance = document.getElementById('badge-binance');
-            const bRevolut = document.getElementById('badge-revolut');
+        function updateUI(to) {
+            const iWise = document.getElementById('icon-wise');
+            const iBinance = document.getElementById('icon-binance');
+            const iRevolut = document.getElementById('icon-revolut');
             const btnText = document.getElementById('btnText');
             const link = document.getElementById('affiliateLink');
 
-            // Reset
-            [bWise, bBinance, bRevolut].forEach(el => el.classList.add('hidden'));
+            // Cache tout
+            [iWise, iBinance, iRevolut].forEach(el => el.classList.add('hidden'));
 
             if (["BTC", "ETH"].includes(to)) {
-                bBinance.classList.remove('hidden');
+                iBinance.classList.remove('hidden');
                 btnText.innerText = "Check on Binance";
                 link.href = "https://www.binance.com";
             } else if (to === "XAU") {
-                bRevolut.classList.remove('hidden');
+                iRevolut.classList.remove('hidden');
                 btnText.innerText = "Invest via Revolut";
                 link.href = "https://www.revolut.com";
             } else {
-                bWise.classList.remove('hidden');
+                iWise.classList.remove('hidden');
                 btnText.innerText = "Open Wise Account";
                 link.href = "https://wise.com";
             }
@@ -94,31 +77,29 @@
             const amount = document.getElementById('amount').value;
             const from = document.getElementById('fromCurrency').value;
             const to = document.getElementById('toCurrency').value;
-            updateAffiliate(to);
+            updateUI(to);
 
             try {
                 const res = await fetch(`https://api.exchangerate-api.com/v4/latest/${from}`);
                 const data = await res.json();
                 const rate = data.rates[to] || 1;
                 document.getElementById('resultValue').innerText = (amount * rate).toLocaleString() + " " + to;
-                document.getElementById('baseText').innerText = `RATE: 1 ${from} = ${rate.toFixed(4)} ${to}`;
+                document.getElementById('baseText').innerText = `1 ${from} = ${rate.toFixed(4)} ${to}`;
                 
                 new TradingView.widget({
                     "autosize": true, "symbol": `${from}${to}`, "interval": "D", "theme": "dark",
                     "container_id": "tradingview_chart", "style": "3", "backgroundColor": "#05070a"
                 });
-            } catch(e) {}
+            } catch(e) { console.log("API Error"); }
         }
 
-        function init() {
+        window.onload = function() {
             const f = document.getElementById('fromCurrency'), t = document.getElementById('toCurrency');
             coins.forEach(c => { f.add(new Option(c, c)); t.add(new Option(c, c)); });
             f.value = "EUR"; t.value = "USD";
             [f, t, document.getElementById('amount')].forEach(el => el.onchange = convert);
             convert();
-        }
-
-        window.onload = init;
+        };
     </script>
 </body>
 </html>
