@@ -3,114 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FlashDevise Terminal</title>
+    <title>Terminal v5</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <style>
         body { background: #05070a; color: white; font-family: sans-serif; }
         .glass { background: #0f141c; border: 1px solid #1e293b; border-radius: 24px; }
         
-        /* Logos en texte pur : Impossible à bloquer */
-        .fake-logo {
+        /* On ne nomme plus les classes par les noms des marques pour éviter les bloqueurs */
+        .box-style {
             width: 24px; height: 24px; border-radius: 4px;
             display: inline-flex; align-items: center; justify-content: center;
             font-weight: 900; font-size: 14px; margin-right: 10px;
         }
-        .bg-wise { background: #00B9FF; color: white; }
-        .bg-binance { background: #F3BA2F; color: black; }
-        .bg-revolut { background: white; color: black; }
-        .hidden { display: none !important; }
+        /* Noms de code : Type A (Wise), Type B (Binance), Type C (Revolut) */
+        .color-type-a { background: #00B9FF; color: white; } 
+        .color-type-b { background: #F3BA2F; color: black; }
+        .color-type-c { background: white; color: black; }
+        .is-hidden { display: none !important; }
     </style>
 </head>
 <body class="p-4">
 
     <div class="max-w-xl mx-auto pt-10">
-        <div class="text-[10px] text-center opacity-20 mb-4 uppercase tracking-widest">Version Mise à Jour : 10h18</div>
+        <div id="version-tag" class="text-[10px] text-center opacity-20 mb-4 uppercase tracking-[0.5em]">SYSTEM_CHECK_OK_V5</div>
         
-        <div class="glass p-6 shadow-2xl">
-            <h1 class="text-center font-black italic mb-8 uppercase">FLASH<span class="text-indigo-500">DEVISE</span></h1>
+        <div class="glass p-8 shadow-2xl">
+            <h1 class="text-center font-black italic mb-8 uppercase tracking-tighter text-xl">FLASH<span class="text-indigo-500">DEVISE</span></h1>
 
             <div class="space-y-4">
-                <input type="number" id="amount" value="1000" class="w-full bg-black/50 border border-white/10 p-4 rounded-xl text-3xl font-bold text-center outline-none">
+                <input type="number" id="val-input" value="1000" class="w-full bg-black/50 border border-white/10 p-5 rounded-2xl text-3xl font-bold text-center outline-none focus:border-indigo-500 transition-all">
                 
                 <div class="grid grid-cols-2 gap-4">
-                    <select id="fromCurrency" class="bg-slate-800 p-3 rounded-xl border-none"></select>
-                    <select id="toCurrency" class="bg-slate-800 p-3 rounded-xl border-none"></select>
+                    <select id="cur-from" class="bg-slate-800 p-4 rounded-xl border-none text-white font-bold"></select>
+                    <select id="cur-to" class="bg-slate-800 p-4 rounded-xl border-none text-white font-bold"></select>
                 </div>
 
-                <div class="py-8 text-center border-t border-white/5 mt-4">
-                    <div id="resultValue" class="text-5xl font-black text-indigo-400">---</div>
-                    <div id="baseText" class="text-xs opacity-40 mt-2 uppercase tracking-widest">Calcul en cours...</div>
+                <div class="py-10 text-center border-t border-white/5 mt-6">
+                    <div id="res-display" class="text-5xl font-black text-indigo-400">---</div>
+                    <div id="rate-info" class="text-[10px] opacity-30 mt-3 uppercase tracking-widest font-bold">Initialisation...</div>
                 </div>
 
-                <a id="affiliateLink" href="#" target="_blank" class="flex items-center justify-center w-full py-5 bg-white text-black rounded-2xl font-black text-sm uppercase">
-                    <span id="logo-wise" class="fake-logo bg-wise">W</span>
-                    <span id="logo-binance" class="fake-logo bg-binance hidden">B</span>
-                    <span id="logo-revolut" class="fake-logo bg-revolut hidden">R</span>
-                    <span id="btnText">Chargement...</span>
+                <a id="action-link" href="#" target="_blank" class="flex items-center justify-center w-full py-5 bg-white text-black rounded-2xl font-black text-xs uppercase tracking-widest hover:scale-[1.02] transition-transform">
+                    <span id="badge-a" class="box-style color-type-a">W</span>
+                    <span id="badge-b" class="box-style color-type-b is-hidden">B</span>
+                    <span id="badge-c" class="box-style color-type-c is-hidden">R</span>
+                    <span id="action-text">Chargement...</span>
                 </a>
             </div>
         </div>
     </div>
 
-    <div class="max-w-xl mx-auto mt-6 h-64 glass overflow-hidden">
-        <div id="tradingview_chart" class="h-full w-full"></div>
+    <div class="max-w-xl mx-auto mt-8 h-64 glass overflow-hidden border border-white/5 shadow-2xl">
+        <div id="tv-chart" class="h-full w-full"></div>
     </div>
 
     <script>
-        const coins = ["EUR", "USD", "GBP", "BTC", "ETH", "XAU"];
+        const currencyList = ["EUR", "USD", "GBP", "CHF", "BTC", "ETH", "XAU"];
 
-        function updateUI(to) {
-            const lWise = document.getElementById('logo-wise');
-            const lBinance = document.getElementById('logo-binance');
-            const lRevolut = document.getElementById('logo-revolut');
-            const btnText = document.getElementById('btnText');
-            const link = document.getElementById('affiliateLink');
+        function refreshUI(target) {
+            const bA = document.getElementById('badge-a');
+            const bB = document.getElementById('badge-b');
+            const bC = document.getElementById('badge-c');
+            const txt = document.getElementById('action-text');
+            const link = document.getElementById('action-link');
 
-            // On cache tout
-            [lWise, lBinance, lRevolut].forEach(el => el.classList.add('hidden'));
+            // Cacher tous les badges
+            [bA, bB, bC].forEach(el => el.classList.add('is-hidden'));
 
-            if (["BTC", "ETH"].includes(to)) {
-                lBinance.classList.remove('hidden');
-                btnText.innerText = "Vérifier sur Binance";
+            if (["BTC", "ETH"].includes(target)) {
+                bB.classList.remove('is-hidden');
+                txt.innerText = "Accéder à la plateforme";
                 link.href = "https://www.binance.com";
-            } else if (to === "XAU") {
-                lRevolut.classList.remove('hidden');
-                btnText.innerText = "Investir via Revolut";
+            } else if (target === "XAU") {
+                bC.classList.remove('is-hidden');
+                txt.innerText = "Consulter Revolut";
                 link.href = "https://www.revolut.com";
             } else {
-                lWise.classList.remove('hidden');
-                btnText.innerText = "Transférer via Wise";
+                bA.classList.remove('is-hidden');
+                txt.innerText = "Vérifier sur Wise";
                 link.href = "https://wise.com";
             }
         }
 
-        async function convert() {
-            const amount = document.getElementById('amount').value;
-            const from = document.getElementById('fromCurrency').value;
-            const to = document.getElementById('toCurrency').value;
-            updateUI(to);
+        async function process() {
+            const val = document.getElementById('val-input').value;
+            const from = document.getElementById('cur-from').value;
+            const to = document.getElementById('cur-to').value;
+            refreshUI(to);
 
             try {
-                const res = await fetch(`https://api.exchangerate-api.com/v4/latest/${from}`);
-                const data = await res.json();
+                const response = await fetch(`https://api.exchangerate-api.com/v4/latest/${from}`);
+                const data = await response.json();
                 const rate = data.rates[to];
-                document.getElementById('resultValue').innerText = (amount * rate).toLocaleString() + " " + to;
-                document.getElementById('baseText').innerText = `1 ${from} = ${rate.toFixed(4)} ${to}`;
+                document.getElementById('res-display').innerText = (val * rate).toLocaleString(undefined, {maximumFractionDigits:2}) + " " + to;
+                document.getElementById('rate-info').innerText = `Taux direct : 1 ${from} = ${rate.toFixed(4)} ${to}`;
                 
                 new TradingView.widget({
                     "autosize": true, "symbol": `${from}${to}`, "interval": "D", "theme": "dark",
-                    "container_id": "tradingview_chart", "style": "3", "backgroundColor": "#05070a", "hide_top_toolbar": true
+                    "container_id": "tv-chart", "style": "3", "backgroundColor": "#05070a", "hide_top_toolbar": true
                 });
-            } catch(e) {}
+            } catch(e) { console.log("Network delay..."); }
         }
 
         window.onload = function() {
-            const f = document.getElementById('fromCurrency'), t = document.getElementById('toCurrency');
-            coins.forEach(c => { f.add(new Option(c, c)); t.add(new Option(c, c)); });
-            f.value = "EUR"; t.value = "USD";
-            [f, t, document.getElementById('amount')].forEach(el => el.onchange = convert);
-            convert();
+            const selFrom = document.getElementById('cur-from'), selTo = document.getElementById('cur-to');
+            currencyList.forEach(c => { 
+                selFrom.add(new Option(c, c)); 
+                selTo.add(new Option(c, c)); 
+            });
+            selFrom.value = "EUR"; selTo.value = "USD";
+            [selFrom, selTo, document.getElementById('val-input')].forEach(el => el.onchange = process);
+            process();
         }
     </script>
 </body>
