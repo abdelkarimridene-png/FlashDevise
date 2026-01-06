@@ -23,9 +23,9 @@ const translations = {
     }
 };
 
-// UTILISATION DE BRANDFETCH (Fiabilité 100%)
+// CDN Brandfetch pour éviter les blocages d'images
 const logos = {
-    wise: "https://cdn.brandfetch.io/id9_hS807S/theme/dark/logo.svg",
+    wise: "https://cdn.brandfetch.io/id9_hS807S/theme/dark/symbol.svg",
     binance: "https://cdn.brandfetch.io/id_X8m6S6u/theme/dark/symbol.svg",
     revolut: "https://cdn.brandfetch.io/id_G8jL-vX/theme/dark/symbol.svg"
 };
