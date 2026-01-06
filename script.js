@@ -23,10 +23,11 @@ const translations = {
     }
 };
 
+// CORRECTION DES LOGOS : Utilisation de liens stables
 const logos = {
-    wise: "https://upload.wikimedia.org/wikipedia/commons/b/be/Wise_Logo.svg",
+    wise: "https://cdn.brandfetch.io/id9_hS807S/theme/dark/logo.svg",
     binance: "https://upload.wikimedia.org/wikipedia/commons/e/e8/Binance_Logo.svg",
-    revolut: "https://upload.wikimedia.org/wikipedia/commons/e/e4/Revolut_logo.svg"
+    revolut: "https://cdn.brandfetch.io/id_G8jL-vX/theme/dark/logo.svg"
 };
 
 let currentLang = localStorage.getItem('preferredLang') || 'fr';
