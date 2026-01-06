@@ -23,43 +23,48 @@ const translations = {
     }
 };
 
+// LOGOS RÉELS CORRIGÉS (Via CDN stables)
+const logos = {
+    wise: "https://wise.com/public-resources/assets/logos/wise/brand_logo_inverse.svg",
+    binance: "https://bin.bnbstatic.com/static/images/common/favicon.ico", // Fallback icône
+    binanceFull: "https://upload.wikimedia.org/wikipedia/commons/e/e8/Binance_Logo.svg",
+    revolut: "https://assets.revolut.com/assets/favicon-32x32.png"
+};
+
+let currentLang = localStorage.getItem('preferredLang') || 'fr';
 const cryptos = [{id:"bitcoin", symbol:"BTC"}, {id:"ethereum", symbol:"ETH"}, {id:"solana", symbol:"SOL"}];
 const metals = [{id:"gold", symbol:"XAU"}, {id:"silver", symbol:"XAG"}];
-let currentLang = localStorage.getItem('preferredLang') || 'fr';
 
 function updateAffiliateInfo(toCurrency) {
     const mainBtnText = document.getElementById('mainAffText');
-    const modalBtnText = document.getElementById('modalAffText');
-    const mainIcon = document.getElementById('mainAffIcon');
-    const modalIcon = document.getElementById('modalAffIcon');
+    const mainBtnLogo = document.getElementById('mainAffLogo');
     const mainBtnLink = document.getElementById('mainAffiliateLink');
+    const modalBtnText = document.getElementById('modalAffText');
+    const modalBtnLogo = document.getElementById('modalAffLogo');
     const modalBtnLink = document.getElementById('modalAffiliateLink');
 
-    let text, iconClass, color, link;
+    let text, logo, link;
 
     if (cryptos.find(c => c.symbol === toCurrency)) {
         text = translations[currentLang]["buy-crypto"];
-        iconClass = "fab fa-bitcoin";
-        color = "#F3BA2F"; 
+        logo = "https://cryptologos.cc/logos/binance-coin-bnb-logo.svg?v=024";
         link = "https://www.binance.com";
     } else if (metals.find(m => m.symbol === toCurrency)) {
         text = translations[currentLang]["buy-metal"];
-        iconClass = "fas fa-gem";
-        color = "#ffffff";
+        logo = "https://www.revolut.com/favicon.ico";
         link = "https://www.revolut.com";
     } else {
         text = translations[currentLang]["buy-fiat"];
-        iconClass = "fas fa-university";
-        color = "#00b9ff";
+        logo = "https://wise.com/public-resources/assets/logos/wise/brand_logo_inverse.svg";
         link = "https://wise.com";
     }
 
-    if (mainBtnText) [mainBtnText, modalBtnText].forEach(el => el.innerText = text);
-    if (mainIcon) [mainIcon, modalIcon].forEach(el => {
-        el.className = iconClass + " text-lg";
-        el.style.color = color;
+    [mainBtnText, modalBtnText].forEach(el => el.innerText = text);
+    [mainBtnLogo, modalBtnLogo].forEach(el => {
+        el.src = logo;
+        el.className = "h-5 w-auto object-contain"; // Assure la visibilité
     });
-    if (mainBtnLink) [mainBtnLink, modalBtnLink].forEach(el => el.href = link);
+    [mainBtnLink, modalBtnLink].forEach(el => el.href = link);
 }
 
 function showModal() { document.getElementById('shareModal').style.display = 'flex'; }
