@@ -23,12 +23,11 @@ const translations = {
     }
 };
 
-// LOGOS RÉELS CORRIGÉS (Via CDN stables)
+// LIENS LOGOS ULTRA-STABLES (PNG via CDN Public)
 const logos = {
-    wise: "https://wise.com/public-resources/assets/logos/wise/brand_logo_inverse.svg",
-    binance: "https://bin.bnbstatic.com/static/images/common/favicon.ico", // Fallback icône
-    binanceFull: "https://upload.wikimedia.org/wikipedia/commons/e/e8/Binance_Logo.svg",
-    revolut: "https://assets.revolut.com/assets/favicon-32x32.png"
+    wise: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Wise_logo_on_blue.png/512px-Wise_logo_on_blue.png",
+    binance: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Binance_Logo.svg/512px-Binance_Logo.svg.png",
+    revolut: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Revolut_logo.svg/512px-Revolut_logo.svg.png"
 };
 
 let currentLang = localStorage.getItem('preferredLang') || 'fr';
@@ -47,23 +46,20 @@ function updateAffiliateInfo(toCurrency) {
 
     if (cryptos.find(c => c.symbol === toCurrency)) {
         text = translations[currentLang]["buy-crypto"];
-        logo = "https://cryptologos.cc/logos/binance-coin-bnb-logo.svg?v=024";
+        logo = logos.binance;
         link = "https://www.binance.com";
     } else if (metals.find(m => m.symbol === toCurrency)) {
         text = translations[currentLang]["buy-metal"];
-        logo = "https://www.revolut.com/favicon.ico";
+        logo = logos.revolut;
         link = "https://www.revolut.com";
     } else {
         text = translations[currentLang]["buy-fiat"];
-        logo = "https://wise.com/public-resources/assets/logos/wise/brand_logo_inverse.svg";
+        logo = logos.wise;
         link = "https://wise.com";
     }
 
     [mainBtnText, modalBtnText].forEach(el => el.innerText = text);
-    [mainBtnLogo, modalBtnLogo].forEach(el => {
-        el.src = logo;
-        el.className = "h-5 w-auto object-contain"; // Assure la visibilité
-    });
+    [mainBtnLogo, modalBtnLogo].forEach(el => el.src = logo);
     [mainBtnLink, modalBtnLink].forEach(el => el.href = link);
 }
 
