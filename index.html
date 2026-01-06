@@ -9,43 +9,51 @@
     <style>
         body { font-family: sans-serif; background: #05070a; color: white; }
         .glass { background: rgba(15, 20, 28, 0.98); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .hidden-logo { display: none !important; }
-        .visible-logo { display: inline-block !important; }
+        /* On force l'affichage des SVGs */
+        svg { display: block; fill: currentColor; }
+        .logo-container { display: none; width: 20px; height: 20px; align-items: center; justify-content: center; }
+        .is-active { display: flex !important; }
     </style>
 </head>
 <body class="p-6">
 
     <div class="max-w-4xl mx-auto">
         <header class="mb-10 text-center">
-            <h1 class="font-black italic text-2xl uppercase">FLASH<span class="text-indigo-500">DEVISE</span></h1>
+            <h1 class="font-black italic text-2xl uppercase tracking-tighter">FLASH<span class="text-indigo-500">DEVISE</span></h1>
         </header>
 
         <div class="grid grid-cols-1 gap-8">
-            <div class="glass p-8 rounded-[2rem]">
-                <div class="flex flex-col md:flex-row gap-4 mb-6">
+            <div class="glass p-8 rounded-[2.5rem]">
+                <div class="flex flex-col md:flex-row gap-4 mb-8">
                     <input type="number" id="amount" value="1000" class="flex-1 bg-white/5 border border-white/10 p-4 rounded-xl text-2xl font-bold outline-none">
-                    <select id="fromCurrency" class="bg-slate-800 p-4 rounded-xl font-bold border-none"></select>
-                    <select id="toCurrency" class="bg-slate-800 p-4 rounded-xl font-bold border-none"></select>
+                    <select id="fromCurrency" class="bg-slate-800 p-4 rounded-xl font-bold border-none text-white"></select>
+                    <select id="toCurrency" class="bg-slate-800 p-4 rounded-xl font-bold border-none text-white"></select>
                 </div>
                 
-                <div class="text-center py-6">
+                <div class="text-center py-4">
                     <div id="resultValue" class="text-5xl font-black text-indigo-400 mb-2">---</div>
-                    <div id="baseText" class="text-xs font-bold opacity-50 uppercase tracking-widest italic">Chargement...</div>
+                    <div id="baseText" class="text-[10px] font-bold opacity-40 uppercase tracking-[0.2em]">Initialisation...</div>
                 </div>
 
-                <a id="affiliateLink" href="https://wise.com" target="_blank" class="flex items-center justify-center w-full py-5 bg-white text-black rounded-2xl font-black text-sm uppercase mt-6">
+                <a id="affiliateLink" href="https://wise.com" target="_blank" class="flex items-center justify-center w-full py-5 bg-white text-black rounded-2xl font-black text-xs uppercase mt-8 hover:scale-[1.01] transition-transform">
                     
-                    <svg id="logo-wise" class="visible-logo mr-3" width="20" height="20" viewBox="0 0 24 24"><path d="M15.42 5.34l.7 2.22h-5.22L8.27 12l3.43 5.4h2.2L10.74 12l2.63-4.44h4.42l.7 2.22h2.2L19.26 5.34h-3.84zM1.31 5.34h2.2l3.23 5.33 3.23-5.33h2.2l-4.33 7.11L12 19.59H9.8l-3.06-5.04L3.68 19.59H1.48l4.33-7.14-4.5-7.11z" fill="#00B9FF"/></svg>
-                    
-                    <svg id="logo-binance" class="hidden-logo mr-3" width="20" height="20" viewBox="0 0 24 24"><path d="M16.624 13.92l-2.617 2.621-2.611-2.621h5.228zm-5.228-3.84l2.611-2.621 2.617 2.621h-5.228zM9.03 12l2.622-2.623 2.623 2.623-2.623 2.623L9.03 12z" fill="#F3BA2F"/></svg>
-                    
-                    <svg id="logo-revolut" class="hidden-logo mr-3" width="20" height="20" viewBox="0 0 24 24"><path d="M19.08 2.33H4.92A2.59 2.59 0 002.33 4.92v14.16a2.59 2.59 0 002.59 2.59h14.16a2.59 2.59 0 002.59-2.59V4.92a2.59 2.59 0 00-2.59-2.59z" fill="black"/></svg>
+                    <div id="container-wise" class="logo-container is-active mr-3">
+                        <svg viewBox="0 0 24 24" class="text-[#00B9FF]"><path d="M15.42 5.34l.7 2.22h-5.22L8.27 12l3.43 5.4h2.2L10.74 12l2.63-4.44h4.42l.7 2.22h2.2L19.26 5.34h-3.84zM1.31 5.34h2.2l3.23 5.33 3.23-5.33h2.2l-4.33 7.11L12 19.59H9.8l-3.06-5.04L3.68 19.59H1.48l4.33-7.14-4.5-7.11z"/></svg>
+                    </div>
+
+                    <div id="container-binance" class="logo-container mr-3">
+                        <svg viewBox="0 0 24 24" class="text-[#F3BA2F]"><path d="M16.624 13.92l-2.617 2.621-2.611-2.621h5.228zm-5.228-3.84l2.611-2.621 2.617 2.621h-5.228zM9.03 12l2.622-2.623 2.623 2.623-2.623 2.623L9.03 12zM6.448 15.54l2.62-2.621 2.617 2.621-2.617 2.619-2.62-2.619zm0-7.08l2.62 2.621-2.62 2.621-2.618-2.621 2.618-2.621z"/></svg>
+                    </div>
+
+                    <div id="container-revolut" class="logo-container mr-3">
+                        <svg viewBox="0 0 24 24" class="text-black"><path d="M19.08 2.33H4.92A2.59 2.59 0 002.33 4.92v14.16a2.59 2.59 0 002.59 2.59h14.16a2.59 2.59 0 002.59-2.59V4.92a2.59 2.59 0 00-2.59-2.59z"/></svg>
+                    </div>
 
                     <span id="btnText">Ouvrir un compte Wise</span>
                 </a>
             </div>
 
-            <div class="glass h-[400px] rounded-[2rem] overflow-hidden">
+            <div class="glass h-[400px] rounded-[3rem] overflow-hidden">
                 <div id="tradingview_chart" class="h-full w-full"></div>
             </div>
         </div>
@@ -54,27 +62,29 @@
     <script>
         const coins = ["EUR", "USD", "GBP", "CHF", "BTC", "ETH", "XAU"];
 
-        function updateUI(to) {
-            const lWise = document.getElementById('logo-wise');
-            const lBinance = document.getElementById('logo-binance');
-            const lRevolut = document.getElementById('logo-revolut');
+        function updateAffiliate(to) {
+            const containers = {
+                wise: document.getElementById('container-wise'),
+                binance: document.getElementById('container-binance'),
+                revolut: document.getElementById('container-revolut')
+            };
             const btnText = document.getElementById('btnText');
             const link = document.getElementById('affiliateLink');
 
-            // Cacher tout
-            [lWise, lBinance, lRevolut].forEach(el => el.className = 'hidden-logo mr-3');
+            // On cache tout d'abord
+            Object.values(containers).forEach(c => c.classList.remove('is-active'));
 
             if (["BTC", "ETH"].includes(to)) {
-                lBinance.className = 'visible-logo mr-3';
+                containers.binance.classList.add('is-active');
                 btnText.innerText = "Vérifier sur Binance";
                 link.href = "https://www.binance.com";
             } else if (to === "XAU") {
-                lRevolut.className = 'visible-logo mr-3';
+                containers.revolut.classList.add('is-active');
                 btnText.innerText = "Investir via Revolut";
                 link.href = "https://www.revolut.com";
             } else {
-                lWise.className = 'visible-logo mr-3';
-                btnText.innerText = "Ouvrir un compte Wise";
+                containers.wise.classList.add('is-active');
+                btnText.innerText = "Transférer via Wise";
                 link.href = "https://wise.com";
             }
         }
@@ -83,13 +93,13 @@
             const amount = document.getElementById('amount').value;
             const from = document.getElementById('fromCurrency').value;
             const to = document.getElementById('toCurrency').value;
-            updateUI(to);
+            updateAffiliate(to);
 
             try {
                 const res = await fetch(`https://api.exchangerate-api.com/v4/latest/${from}`);
                 const data = await res.json();
                 const rate = data.rates[to] || 1;
-                document.getElementById('resultValue').innerText = (amount * rate).toLocaleString() + " " + to;
+                document.getElementById('resultValue').innerText = (amount * rate).toLocaleString(undefined, {maximumFractionDigits:2}) + " " + to;
                 document.getElementById('baseText').innerText = `1 ${from} = ${rate.toFixed(4)} ${to}`;
                 
                 new TradingView.widget({
