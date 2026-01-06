@@ -2,32 +2,27 @@ const translations = {
     fr: {
         "nav-dash": "Marchés", "nav-about": "À Propos", "nav-news": "Analyses",
         "calc-title": "Convertisseur Universel", "init-text": "Initialisation...",
-        "aff-title": "Meilleur taux d'exécution", "modal-title": "Taux prêt !",
-        "modal-desc": "Profitez de l'offre partenaire pour économiser sur vos frais.",
+        "aff-title": "Meilleure Exécution", "modal-title": "Taux prêt !",
+        "modal-desc": "Le taux a été actualisé avec succès.",
+        "modal-sub": "Partagez ce résultat avec vos proches ou utilisez notre lien partenaire pour réduire vos frais de change dès maintenant.",
         "buy-crypto": "Vérifier sur Binance", "buy-metal": "Investir via Revolut", "buy-fiat": "Ouvrir un compte Wise",
         "about-title": "Transparence FlashDevise", "news-title": "Analyses & Flux News",
         "legal-title": "Note Légale",
         "legal-note": "Outil de consultation gratuit. Les taux sont fournis à titre informatif. En utilisant nos liens partenaires, vous soutenez ce projet sans aucun surcoût pour vous.",
-        "about-desc": "Terminal indépendant fournissant des données neutres. Nous aidons les utilisateurs à identifier le taux de change réel pour minimiser les frais de transaction."
+        "about-desc": "Terminal indépendant fournissant des données neutres. Nous aidons les utilisateurs à identifier le taux de change réel pour minimiser les frais de transaction bancaires."
     },
     en: {
         "nav-dash": "Markets", "nav-about": "About", "nav-news": "Analysis",
         "calc-title": "Universal Converter", "init-text": "Initializing...",
-        "aff-title": "Best Execution Rate", "modal-title": "Rate Ready!",
-        "modal-desc": "Use our partner offer to save on transfer fees.",
+        "aff-title": "Best Execution", "modal-title": "Rate Ready!",
+        "modal-desc": "Rate updated successfully.",
+        "modal-sub": "Share this result or use our partner link to reduce your exchange fees right now.",
         "buy-crypto": "Check on Binance", "buy-metal": "Invest via Revolut", "buy-fiat": "Open Wise Account",
         "about-title": "FlashDevise Transparency", "news-title": "Market Analysis & News",
         "legal-title": "Legal Disclaimer",
         "legal-note": "Free tool. Rates are for info only. Using partner links supports us at no cost to you.",
         "about-desc": "Independent terminal providing neutral data. We help find the real rate to minimize fees."
     }
-};
-
-// Logos intégrés en dur (SVG Code) pour éviter tout blocage
-const logos = {
-    wise: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMCAzMCI+PHBhdGggZmlsbD0iIzAwYjVmZiIgZD0iTTE1LjUgNkw4IDE0LjVsNS41IDUuNVoiLz48L3N2Zz4=", // Version simplifiée pour test
-    binance: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iI0YwQjkwMCIgZD0iTTEyIDJsMy41IDMuNUw0IDYgMTAuNUwyIDExbDUuNSA1LjVaIi8+PC9zdmc+",
-    revolut: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iIzAwMCIgZD0iTTEyIDJsOCAxMkg0WiIvPjwvc3ZnPg=="
 };
 
 const cryptos = [{id:"bitcoin", symbol:"BTC"}, {id:"ethereum", symbol:"ETH"}, {id:"solana", symbol:"SOL"}];
@@ -87,7 +82,7 @@ async function fetchNews() {
         container.innerHTML = posts.map(p => `
             <div class="glass p-6 rounded-2xl border border-white/5">
                 <span class="text-[8px] font-black text-indigo-500 uppercase">${p.source.title}</span>
-                <h4 class="text-[11px] font-bold mt-2 text-slate-200">${p.title}</h4>
+                <h4 class="text-[11px] font-bold mt-2 text-slate-200 h-10 overflow-hidden">${p.title}</h4>
                 <a href="${p.url}" target="_blank" class="text-[9px] text-slate-500 mt-4 block font-black hover:text-white transition">VOIR PLUS →</a>
             </div>
         `).join('');
@@ -123,6 +118,13 @@ async function init() {
     all.forEach(s => { fS.add(new Option(s, s)); tS.add(new Option(s, s)); });
     fS.value = "EUR"; tS.value = "USD";
     setLanguage(currentLang); fetchNews(); convert(); updateChart();
+}
+
+function share(platform) {
+    const res = document.getElementById('resultValue').innerText;
+    const text = encodeURIComponent(`FlashDevise : Taux de ${res} trouvé. Calculez en direct : `);
+    const url = platform === 'whatsapp' ? `https://api.whatsapp.com/send?text=${text}%20${window.location.href}` : `https://t.me/share/url?url=${window.location.href}&text=${text}`;
+    window.open(url, '_blank');
 }
 
 document.getElementById('amount').addEventListener('change', convert);
