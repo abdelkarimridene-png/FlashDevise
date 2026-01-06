@@ -25,7 +25,16 @@ const translations = {
     }
 };
 
-// Logos SVG en code pur (Zéro image externe)
+// Dictionnaire des noms complets des devises
+const currencyNames = {
+    "USD": "US Dollar", "EUR": "Euro", "GBP": "British Pound", "JPY": "Japanese Yen",
+    "CAD": "Canadian Dollar", "AUD": "Australian Dollar", "CHF": "Swiss Franc",
+    "CNY": "Chinese Yuan", "MAD": "Moroccan Dirham", "DZD": "Algerian Dinar",
+    "BTC": "Bitcoin", "ETH": "Ethereum", "SOL": "Solana", "XAU": "Gold (Ounce)",
+    "XAG": "Silver (Ounce)", "AED": "UAE Dirham", "INR": "Indian Rupee",
+    "BRL": "Brazilian Real", "TRY": "Turkish Lira", "RUB": "Russian Ruble"
+};
+
 const svgLogos = {
     binance: `<svg viewBox="0 0 24 24" fill="#F0B90B" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"><path d="M16.624 13.9202l-4.624 4.624-4.624-4.624-2.147 2.147L12 23.3333l7.271-7.2661-2.647-2.147zm4.624-4.624L24 12l-2.752 2.704-2.147-2.147 2.147-2.257zm-18.496 0L0 12l2.752 2.704 2.147-2.147-2.147-2.257zm9.248-9.2962L19.271 7.2661l-2.647 2.147L12 4.7889l-4.624 4.624-2.647-2.147L12 0zm0 6.1364l2.647 2.647L12 11.4304l-2.647-2.647L12 6.1364zm7.271 3.1116l2.147 2.147-2.147 2.147-2.147-2.147 2.147-2.147zm-14.542 0l2.147 2.147-2.147 2.147-2.147-2.147 2.147-2.147z"/></svg>`,
     wise: `<svg viewBox="0 0 24 24" fill="#00B5FF" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"><path d="M12 0L8.63 8.37L0 14.5L13.12 14.5L14.75 24L18.12 15.63L24 9.5L12.37 9.5L12 0Z"/></svg>`,
@@ -37,12 +46,9 @@ const metals = [{id:"gold", symbol:"XAU"}, {id:"silver", symbol:"XAG"}];
 let currentLang = localStorage.getItem('preferredLang') || 'fr';
 
 function updateAffiliateInfo(toCurrency) {
-    const mainBtnText = document.getElementById('mainAffText');
-    const modalBtnText = document.getElementById('modalAffText');
-    const mainBtnLink = document.getElementById('mainAffiliateLink');
-    const modalBtnLink = document.getElementById('modalAffiliateLink');
-    const mainIcon = document.getElementById('mainAffIcon');
-    const modalIcon = document.getElementById('modalAffIcon');
+    const mainBtnText = document.getElementById('mainAffText'), modalBtnText = document.getElementById('modalAffText');
+    const mainBtnLink = document.getElementById('mainAffiliateLink'), modalBtnLink = document.getElementById('modalAffiliateLink');
+    const mainIcon = document.getElementById('mainAffIcon'), modalIcon = document.getElementById('modalAffIcon');
 
     let text, link, icon;
     if (cryptos.find(c => c.symbol === toCurrency)) {
@@ -83,8 +89,7 @@ async function convert() {
 }
 
 async function fetchNews() {
-    const container = document.getElementById('news-container');
-    const ticker = document.getElementById('ticker');
+    const container = document.getElementById('news-container'), ticker = document.getElementById('ticker');
     try {
         const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://cryptopanic.com/api/v1/posts/?public=true')}`);
         const data = await res.json();
@@ -110,8 +115,7 @@ function setLanguage(lang) {
 }
 
 function updateChart() {
-    const from = document.getElementById('fromCurrency').value;
-    const to = document.getElementById('toCurrency').value;
+    const from = document.getElementById('fromCurrency').value, to = document.getElementById('toCurrency').value;
     let symbol = `FX_IDC:${from}${to}`;
     if (from === "BTC" || to === "BTC") symbol = "BINANCE:BTCUSDT";
     new TradingView.widget({
@@ -124,8 +128,15 @@ async function init() {
     const fS = document.getElementById('fromCurrency'), tS = document.getElementById('toCurrency');
     const res = await fetch(`https://api.exchangerate-api.com/v4/latest/USD`);
     const data = await res.json();
-    const all = [...Object.keys(data.rates), "BTC", "ETH", "SOL", "XAU", "XAG"].sort();
-    all.forEach(s => { fS.add(new Option(s, s)); tS.add(new Option(s, s)); });
+    const allCodes = [...Object.keys(data.rates), "BTC", "ETH", "SOL", "XAU", "XAG"].sort();
+    
+    allCodes.forEach(code => {
+        const fullName = currencyNames[code] ? ` - ${currencyNames[code]}` : "";
+        const label = `${code}${fullName}`;
+        fS.add(new Option(label, code));
+        tS.add(new Option(label, code));
+    });
+
     fS.value = "EUR"; tS.value = "USD";
     setLanguage(currentLang); fetchNews(); convert(); updateChart();
 }
