@@ -58,8 +58,14 @@ function updateAffiliateInfo(toCurrency) {
     }
 
     [mainBtnText, modalBtnText].forEach(el => el.innerText = text);
-    [mainBtnLogo, modalBtnLogo].forEach(el => el.src = logo);
     [mainBtnLink, modalBtnLink].forEach(el => el.href = link);
+    
+    // Application du filtre blanc sur les logos dynamiques
+    [mainBtnLogo, modalBtnLogo].forEach(el => {
+        el.src = logo;
+        el.style.filter = "brightness(0) invert(1)";
+        el.style.maxHeight = "16px";
+    });
 }
 
 function showModal() { document.getElementById('shareModal').style.display = 'flex'; }
@@ -123,8 +129,9 @@ function updateChart() {
     const from = document.getElementById('fromCurrency').value;
     const to = document.getElementById('toCurrency').value;
     let symbol = `FX_IDC:${from}${to}`;
-    if (from === "BTC" || to === "BTC") symbol = "BINANCE:BTCUSDT";
+    if (from === "BTC" || to === "BTC" || from === "ETH" || to === "ETH") symbol = "BINANCE:BTCUSDT";
     if (from === "XAU" || to === "XAU") symbol = "OANDA:XAUUSD";
+    
     new TradingView.widget({
         "autosize": true, "symbol": symbol, "interval": "D", "theme": "dark", "style": "3",
         "container_id": "tradingview_chart", "locale": currentLang, "hide_top_toolbar": true, "backgroundColor": "#05070a"
