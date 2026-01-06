@@ -7,8 +7,8 @@ const translations = {
         "buy-crypto": "Vérifier sur Binance", "buy-metal": "Investir via Revolut", "buy-fiat": "Ouvrir un compte Wise",
         "about-title": "Transparence FlashDevise", "news-title": "Analyses & Flux News",
         "legal-title": "Note Légale",
-        "legal-note": "Outil de consultation gratuit. Les taux sont fournis à titre informatif. En utilisant nos liens partenaires, vous soutenez ce projet sans aucun surcoût pour vous.",
-        "about-desc": "Terminal indépendant fournissant des données neutres. Nous aidons les utilisateurs à identifier le taux de change réel pour minimiser les frais de transaction bancaires."
+        "legal-note": "Outil de consultation gratuit. Les taux sont fournis à titre informatif.",
+        "about-desc": "Terminal indépendant fournissant des données neutres."
     },
     en: {
         "nav-dash": "Markets", "nav-about": "About", "nav-news": "Analysis",
@@ -18,16 +18,9 @@ const translations = {
         "buy-crypto": "Check on Binance", "buy-metal": "Invest via Revolut", "buy-fiat": "Open Wise Account",
         "about-title": "FlashDevise Transparency", "news-title": "Market Analysis & News",
         "legal-title": "Legal Disclaimer",
-        "legal-note": "Free consultation tool. Rates are for informational purposes only. By using our partner links, you support this project at no extra cost to you.",
-        "about-desc": "Independent terminal providing neutral data. We help users identify the real exchange rate to minimize bank transaction fees."
+        "legal-note": "Free consultation tool. Rates are for informational purposes only.",
+        "about-desc": "Independent terminal providing neutral data."
     }
-};
-
-// Utilisation de Simple Icons (CDN jscdn) - Sources ultra-fiables
-const logos = {
-    wise: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/wise.svg",
-    binance: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/binance.svg",
-    revolut: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/revolut.svg"
 };
 
 let currentLang = localStorage.getItem('preferredLang') || 'fr';
@@ -36,35 +29,32 @@ const metals = [{id:"gold", symbol:"XAU"}, {id:"silver", symbol:"XAG"}];
 
 function updateAffiliateInfo(toCurrency) {
     const mainBtnText = document.getElementById('mainAffText');
-    const mainBtnLogo = document.getElementById('mainAffLogo');
+    const mainBtnIcon = document.getElementById('mainAffIcon');
     const mainBtnLink = document.getElementById('mainAffiliateLink');
     const modalBtnText = document.getElementById('modalAffText');
-    const modalBtnLogo = document.getElementById('modalAffLogo');
+    const modalBtnIcon = document.getElementById('modalAffIcon');
     const modalBtnLink = document.getElementById('modalAffiliateLink');
 
-    let text, logo, link;
+    let text, iconClass, link;
 
     if (cryptos.find(c => c.symbol === toCurrency)) {
         text = translations[currentLang]["buy-crypto"];
-        logo = logos.binance;
+        iconClass = "fab fa-bitcoin"; // Icône générique crypto
         link = "https://www.binance.com";
     } else if (metals.find(m => m.symbol === toCurrency)) {
         text = translations[currentLang]["buy-metal"];
-        logo = logos.revolut;
+        iconClass = "fas fa-coins"; // Icône pour métaux
         link = "https://www.revolut.com";
     } else {
         text = translations[currentLang]["buy-fiat"];
-        logo = logos.wise;
+        iconClass = "fas fa-university"; // Icône pour banque/fiat
         link = "https://wise.com";
     }
 
     [mainBtnText, modalBtnText].forEach(el => el.innerText = text);
     [mainBtnLink, modalBtnLink].forEach(el => el.href = link);
-
-    [mainBtnLogo, modalBtnLogo].forEach(el => {
-        el.src = logo;
-        el.style.filter = "brightness(0) invert(1)"; // Rend l'icône blanche
-        el.style.width = "16px";
+    [mainBtnIcon, modalBtnIcon].forEach(el => {
+        el.className = iconClass + " text-lg";
     });
 }
 
@@ -144,13 +134,6 @@ async function init() {
     fS.value = "EUR"; tS.value = "USD";
     setLanguage(currentLang);
     fetchNews(); convert(); updateChart();
-}
-
-function share(platform) {
-    const res = document.getElementById('resultValue').innerText;
-    const text = encodeURIComponent(`FlashDevise : Taux de ${res} trouvé. Calculez en direct : `);
-    const url = platform === 'whatsapp' ? `https://api.whatsapp.com/send?text=${text}%20${window.location.href}` : `https://t.me/share/url?url=${window.location.href}&text=${text}`;
-    window.open(url, '_blank');
 }
 
 document.getElementById('amount').addEventListener('change', convert);
