@@ -28,8 +28,8 @@
             <a href="#news" data-key="nav-news">Analyses</a>
         </nav>
         <div class="flex gap-3">
-            <button onclick="setLanguage('fr')" class="text-[10px] font-black opacity-40 hover:opacity-100">FR</button>
-            <button onclick="setLanguage('en')" class="text-[10px] font-black opacity-40 hover:opacity-100">EN</button>
+            <button onclick="setLanguage('fr')" class="text-[10px] font-black opacity-40 hover:opacity-100 transition">FR</button>
+            <button onclick="setLanguage('en')" class="text-[10px] font-black opacity-40 hover:opacity-100 transition">EN</button>
         </div>
     </header>
 
@@ -56,7 +56,8 @@
 
             <div class="glass p-8 rounded-[2.5rem] bg-indigo-500/5 text-center border border-white/5">
                 <h3 class="text-[10px] font-black text-indigo-300 uppercase tracking-widest mb-4" data-key="aff-title">Partenaire</h3>
-                <a id="mainAffiliateLink" href="#" target="_blank" class="flex items-center justify-center w-full py-4 bg-white text-black text-[11px] font-black uppercase rounded-xl hover:bg-indigo-50 transition shadow-lg">
+                <a id="mainAffiliateLink" href="#" target="_blank" class="flex items-center justify-center gap-3 w-full py-4 bg-white text-black text-[11px] font-black uppercase rounded-xl hover:bg-indigo-50 transition shadow-lg px-6">
+                    <div id="mainAffIcon"></div>
                     <span id="mainAffText">Chargement...</span>
                 </a>
             </div>
@@ -66,7 +67,7 @@
             <div class="glass rounded-[2.5rem] overflow-hidden h-[540px] border border-white/5 relative">
                 <div id="tradingview_chart" class="h-full"></div>
                 <div class="absolute bottom-0 w-full bg-black/80 backdrop-blur-md py-3 border-t border-white/5 overflow-hidden">
-                    <div id="ticker" class="animate-marquee text-[9px] font-bold text-slate-500 uppercase tracking-widest">LIVE MARKET ANALYSIS • FLASH DEVISE DATA • </div>
+                    <div id="ticker" class="animate-marquee text-[9px] font-bold text-slate-500 uppercase tracking-widest">LIVE FEED • MARKET ANALYSIS • </div>
                 </div>
             </div>
         </div>
@@ -95,25 +96,22 @@
     <div id="shareModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
         <div class="glass max-w-md w-full p-10 rounded-[3rem] border border-white/20 text-center relative">
             <button onclick="closeModal()" class="absolute top-6 right-6 text-slate-500 hover:text-white"><i class="fas fa-times text-xl"></i></button>
-            
             <h2 class="text-2xl font-black mb-2" data-key="modal-title">Taux Prêt !</h2>
             <p class="text-[11px] text-indigo-400 font-bold uppercase mb-4" data-key="modal-desc">Le taux a été actualisé avec succès.</p>
-            
-            <p class="text-[10px] text-slate-400 leading-relaxed mb-8 px-4" data-key="modal-sub">
-                Partagez ce résultat avec vos proches ou utilisez notre lien partenaire pour réduire vos frais de change dès maintenant.
-            </p>
+            <p class="text-[10px] text-slate-400 leading-relaxed mb-8 px-4" data-key="modal-sub">Partagez ce résultat avec vos proches ou utilisez notre lien partenaire pour réduire vos frais de change dès maintenant.</p>
 
             <div class="grid grid-cols-2 gap-4 mb-8">
-                <button onclick="share('whatsapp')" class="py-4 bg-[#25D366]/10 text-[#25D366] rounded-2xl font-bold text-[10px] uppercase hover:bg-[#25D366]/20 transition">
+                <button onclick="share('whatsapp')" class="py-4 bg-[#25D366]/10 text-[#25D366] rounded-2xl font-bold text-[10px] uppercase transition hover:bg-[#25D366]/20">
                     <i class="fab fa-whatsapp mr-2"></i> WhatsApp
                 </button>
-                <button onclick="share('telegram')" class="py-4 bg-[#0088cc]/10 text-[#0088cc] rounded-2xl font-bold text-[10px] uppercase hover:bg-[#0088cc]/20 transition">
+                <button onclick="share('telegram')" class="py-4 bg-[#0088cc]/10 text-[#0088cc] rounded-2xl font-bold text-[10px] uppercase transition hover:bg-[#0088cc]/20">
                     <i class="fab fa-telegram-plane mr-2"></i> Telegram
                 </button>
             </div>
 
-            <a id="modalAffiliateLink" href="#" target="_blank" class="block w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase shadow-xl hover:bg-indigo-500 transition px-6">
-                <span id="modalAffText">Profiter de l'offre partenaire</span>
+            <a id="modalAffiliateLink" href="#" target="_blank" class="flex items-center justify-center gap-3 w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase shadow-xl hover:bg-indigo-500 transition px-6">
+                <div id="modalAffIcon"></div>
+                <span id="modalAffText">Profiter de l'offre</span>
             </a>
         </div>
     </div>
