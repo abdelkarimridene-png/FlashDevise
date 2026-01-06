@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FlashDevise | Intelligence Marché</title>
+    <title>FlashDevise | Terminal Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <style>
-        body { background: #05070a; color: white; font-family: 'Inter', sans-serif; }
-        .glass-card { background: #0f141c; border: 1px solid #1e293b; border-radius: 1rem; height: 100%; }
-        .status-bar { border-top: 1px solid #1e293b; background: #0a0e14; }
+        body { background: #05070a; color: white; font-family: sans-serif; }
+        .card { background: #0f141c; border: 1px solid #1e293b; border-radius: 1rem; overflow: hidden; height: 100%; }
+        .widget-container { width: 100%; height: 450px; border: none; }
     </style>
 </head>
 <body class="p-4">
@@ -18,105 +17,87 @@
         
         <header class="flex justify-between items-center py-4 border-b border-white/5">
             <h1 class="font-black italic text-2xl uppercase">FLASH<span class="text-indigo-500">DEVISE</span></h1>
-            <div class="flex items-center gap-2">
-                <span class="relative flex h-2 w-2">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                </span>
-                <span class="text-[10px] font-bold opacity-50 uppercase tracking-widest">Live Analysis Feed</span>
-            </div>
+            <div id="status" class="text-[10px] font-bold text-green-500 uppercase tracking-widest animate-pulse">● Live Data Connection</div>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             
             <div class="lg:col-span-4 space-y-6">
-                <div class="glass-card p-6">
-                    <div class="flex gap-4 mb-6">
-                        <select id="fromCur" class="flex-1 bg-slate-800 p-3 rounded-lg font-bold border-none outline-none"></select>
-                        <select id="toCur" class="flex-1 bg-slate-800 p-3 rounded-lg font-bold border-none outline-none"></select>
+                <div class="card p-6">
+                    <div class="flex gap-2 mb-6">
+                        <select id="fCur" class="flex-1 bg-slate-800 p-3 rounded-lg font-bold outline-none"></select>
+                        <select id="tCur" class="flex-1 bg-slate-800 p-3 rounded-lg font-bold outline-none"></select>
                     </div>
                     
-                    <div class="text-center mb-6">
-                        <div id="price-display" class="text-5xl font-black text-indigo-400">0.00</div>
-                        <div id="rate-text" class="text-[10px] opacity-40 uppercase mt-2 font-bold tracking-tighter">Connexion...</div>
+                    <div class="text-center mb-8">
+                        <div id="price" class="text-5xl font-black text-indigo-400">---</div>
+                        <div id="rate" class="text-[10px] opacity-40 uppercase mt-2 font-bold tracking-widest">Calcul...</div>
                     </div>
 
-                    <div class="tradingview-widget-container" id="tech-analysis-box">
-                        <div class="tradingview-widget-container__widget"></div>
+                    <div class="h-[350px]">
+                        <div id="tech-analysis"></div>
                     </div>
                 </div>
             </div>
 
             <div class="lg:col-span-8">
-                <div class="glass-card min-h-[500px]" id="main-chart">
-                    </div>
+                <div class="card">
+                    <div id="main-chart" class="h-[550px]"></div>
+                </div>
             </div>
 
             <div class="lg:col-span-12">
-                <div class="glass-card p-6">
-                    <h2 class="text-sm font-bold mb-6 uppercase tracking-widest text-indigo-500">Flux d'actualités mondiales</h2>
-                    <div id="news-feed-container" class="h-[400px]">
-                        </div>
+                <div class="card p-6">
+                    <h2 class="text-sm font-bold mb-4 uppercase tracking-[0.3em] text-indigo-500">Flux d'Actualités Globales</h2>
+                    <div id="news-feed" class="h-[500px]"></div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        const assets = ["EUR", "USD", "GBP", "CHF", "JPY", "BTC", "ETH", "XAU"];
+        const symbols = ["EUR", "USD", "GBP", "CHF", "JPY", "BTC", "ETH", "XAU"];
 
-        function loadWidgets(from, to) {
-            const pair = `${from}${to}`;
+        function renderWidgets() {
+            const f = document.getElementById('fCur').value;
+            const t = document.getElementById('tCur').value;
+            const pair = (f + t).toUpperCase();
 
-            // 1. Analyse Technique (Résumé automatique)
-            document.getElementById('tech-analysis-box').innerHTML = ''; 
-            const techScript = document.createElement('script');
-            techScript.src = "https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js";
-            techScript.async = true;
-            techScript.innerHTML = JSON.stringify({
-                "interval": "1D", "width": "100%", "isTransparent": true, "height": 320,
-                "symbol": `FX_IDC:${pair}`, "showIntervalTabs": true, "locale": "fr", "colorTheme": "dark"
-            });
-            document.getElementById('tech-analysis-box').appendChild(techScript);
+            // 1. Graphique Principal (Injection stable)
+            document.getElementById('main-chart').innerHTML = `
+                <iframe src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_762ae&symbol=${pair}&interval=D&hidesidetoolbar=1&hidetoptoolbar=1&symboledit=1&saveimage=1&toolbarbg=f1f3f6&studies=[]&theme=dark&style=3&timezone=Europe%2FParis&studies_overrides={}&overrides={}&enabled_features=[]&disabled_features=[]&locale=fr" 
+                style="width: 100%; height: 100%; margin: 0; padding: 0;" frameborder="0" allowTransparency="true" scrolling="no" allowfullscreen></iframe>`;
 
-            // 2. Graphique Principal
-            document.getElementById('main-chart').innerHTML = '';
-            new TradingView.widget({
-                "autosize": true, "symbol": pair, "interval": "D", "theme": "dark",
-                "style": "3", "locale": "fr", "container_id": "main-chart", "hide_top_toolbar": false
-            });
+            // 2. Analyse Technique (Jauge d'analyse)
+            document.getElementById('tech-analysis').innerHTML = `
+                <iframe src="https://s.tradingview.com/embed-widget/technical-analysis/?v=1.0&lang=fr&colorTheme=dark&hasLabels=true&ad_source=false&width=100%25&height=100%25&symbol=FX_IDC%3A${pair}&interval=1D" 
+                style="width: 100%; height: 100%;" frameborder="0" allowTransparency="true" scrolling="no"></iframe>`;
 
-            // 3. News (Reuters, CNBC, etc.)
-            document.getElementById('news-feed-container').innerHTML = '';
-            const newsScript = document.createElement('script');
-            newsScript.src = "https://s3.tradingview.com/external-embedding/embed-widget-timeline.js";
-            newsScript.async = true;
-            newsScript.innerHTML = JSON.stringify({
-                "feedMode": "symbol", "symbol": `FX_IDC:${pair}`, "colorTheme": "dark",
-                "isTransparent": true, "displayMode": "regular", "width": "100%", "height": 400, "locale": "fr"
-            });
-            document.getElementById('news-feed-container').appendChild(newsScript);
+            // 3. News Feed (Reuters/CNBC via TradingView Timeline)
+            document.getElementById('news-feed').innerHTML = `
+                <iframe src="https://s.tradingview.com/embed-widget/timeline/?v=1.0&lang=fr&colorTheme=dark&isTransparent=true&displayMode=regular&width=100%25&height=100%25&symbol=FX_IDC%3A${pair}" 
+                style="width: 100%; height: 100%;" frameborder="0" allowTransparency="true" scrolling="no"></iframe>`;
         }
 
-        async function getLivePrice() {
-            const from = document.getElementById('fromCur').value;
-            const to = document.getElementById('toCur').value;
+        async function getRate() {
+            const f = document.getElementById('fCur').value;
+            const t = document.getElementById('tCur').value;
             try {
-                const r = await fetch(`https://api.exchangerate-api.com/v4/latest/${from}`);
+                const r = await fetch(`https://api.exchangerate-api.com/v4/latest/${f}`);
                 const d = await r.json();
-                const rate = d.rates[to];
-                document.getElementById('price-display').innerText = rate.toFixed(4);
-                document.getElementById('rate-text').innerText = `LIVE: 1 ${from} = ${rate} ${to}`;
-            } catch(e) {}
+                const rate = d.rates[t];
+                document.getElementById('price').innerText = rate.toFixed(4);
+                document.getElementById('rate').innerText = `LIVE RATE: 1 ${f} = ${rate} ${t}`;
+            } catch(e) { document.getElementById('status').innerText = "● Connection Error"; }
         }
 
         window.onload = function() {
-            const f = document.getElementById('fromCur'), t = document.getElementById('toCur');
-            assets.forEach(a => { f.add(new Option(a, a)); t.add(new Option(a, a)); });
-            f.value = "EUR"; t.value = "USD";
+            const selF = document.getElementById('fCur'), selT = document.getElementById('tCur');
+            symbols.forEach(s => { selF.add(new Option(s, s)); selT.add(new Option(s, s)); });
+            selF.value = "EUR"; selT.value = "USD";
             
-            const updateAll = () => { getLivePrice(); loadWidgets(f.value, t.value); };
-            [f, t].forEach(el => el.onchange = updateAll);
+            const updateAll = () => { getRate(); renderWidgets(); };
+            [selF, selT].forEach(el => el.onchange = updateAll);
             updateAll();
         };
     </script>
