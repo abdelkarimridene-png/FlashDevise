@@ -25,6 +25,13 @@ const translations = {
     }
 };
 
+// Logos SVG en code pur (Zéro image externe)
+const svgLogos = {
+    binance: `<svg viewBox="0 0 24 24" fill="#F0B90B" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"><path d="M16.624 13.9202l-4.624 4.624-4.624-4.624-2.147 2.147L12 23.3333l7.271-7.2661-2.647-2.147zm4.624-4.624L24 12l-2.752 2.704-2.147-2.147 2.147-2.257zm-18.496 0L0 12l2.752 2.704 2.147-2.147-2.147-2.257zm9.248-9.2962L19.271 7.2661l-2.647 2.147L12 4.7889l-4.624 4.624-2.647-2.147L12 0zm0 6.1364l2.647 2.647L12 11.4304l-2.647-2.647L12 6.1364zm7.271 3.1116l2.147 2.147-2.147 2.147-2.147-2.147 2.147-2.147zm-14.542 0l2.147 2.147-2.147 2.147-2.147-2.147 2.147-2.147z"/></svg>`,
+    wise: `<svg viewBox="0 0 24 24" fill="#00B5FF" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"><path d="M12 0L8.63 8.37L0 14.5L13.12 14.5L14.75 24L18.12 15.63L24 9.5L12.37 9.5L12 0Z"/></svg>`,
+    revolut: `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"><path d="M19.333 3.333H4.667C3.931 3.333 3.333 3.931 3.333 4.667v14.666c0 .736.598 1.334 1.334 1.334h14.666c.736 0 1.334-.598 1.334-1.334V4.667c0-.736-.598-1.334-1.334-1.334zm-7.333 13.334l-3.333-3.334h6.666l-3.333 3.334z"/></svg>`
+};
+
 const cryptos = [{id:"bitcoin", symbol:"BTC"}, {id:"ethereum", symbol:"ETH"}, {id:"solana", symbol:"SOL"}];
 const metals = [{id:"gold", symbol:"XAU"}, {id:"silver", symbol:"XAG"}];
 let currentLang = localStorage.getItem('preferredLang') || 'fr';
@@ -34,18 +41,21 @@ function updateAffiliateInfo(toCurrency) {
     const modalBtnText = document.getElementById('modalAffText');
     const mainBtnLink = document.getElementById('mainAffiliateLink');
     const modalBtnLink = document.getElementById('modalAffiliateLink');
+    const mainIcon = document.getElementById('mainAffIcon');
+    const modalIcon = document.getElementById('modalAffIcon');
 
-    let text, link;
+    let text, link, icon;
     if (cryptos.find(c => c.symbol === toCurrency)) {
-        text = translations[currentLang]["buy-crypto"]; link = "https://www.binance.com";
+        text = translations[currentLang]["buy-crypto"]; link = "https://www.binance.com"; icon = svgLogos.binance;
     } else if (metals.find(m => m.symbol === toCurrency)) {
-        text = translations[currentLang]["buy-metal"]; link = "https://www.revolut.com";
+        text = translations[currentLang]["buy-metal"]; link = "https://www.revolut.com"; icon = svgLogos.revolut;
     } else {
-        text = translations[currentLang]["buy-fiat"]; link = "https://wise.com";
+        text = translations[currentLang]["buy-fiat"]; link = "https://wise.com"; icon = svgLogos.wise;
     }
 
     if(mainBtnText) [mainBtnText, modalBtnText].forEach(el => { if(el) el.innerText = text; });
     if(mainBtnLink) [mainBtnLink, modalBtnLink].forEach(el => { if(el) el.href = link; });
+    if(mainIcon) [mainIcon, modalIcon].forEach(el => { if(el) el.innerHTML = icon; });
 }
 
 async function convert() {
