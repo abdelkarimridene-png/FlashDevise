@@ -3,72 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FlashDevise | Terminal v4</title>
+    <title>FlashDevise Terminal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; background: #05070a; color: white; }
-        .glass { background: rgba(15, 20, 28, 0.98); border: 1px solid rgba(255, 255, 255, 0.1); }
+        body { background: #05070a; color: white; font-family: sans-serif; }
+        .glass { background: #0f141c; border: 1px solid #1e293b; border-radius: 24px; }
+        
+        /* Logos en texte pur : Impossible à bloquer */
+        .fake-logo {
+            width: 24px; height: 24px; border-radius: 4px;
+            display: inline-flex; align-items: center; justify-content: center;
+            font-weight: 900; font-size: 14px; margin-right: 10px;
+        }
+        .bg-wise { background: #00B9FF; color: white; }
+        .bg-binance { background: #F3BA2F; color: black; }
+        .bg-revolut { background: white; color: black; }
         .hidden { display: none !important; }
     </style>
 </head>
-<body class="p-6">
+<body class="p-4">
 
-    <div class="max-w-4xl mx-auto">
-        <header class="mb-10 text-center">
-            <h1 class="font-black italic text-2xl uppercase tracking-tighter">FLASH<span class="text-indigo-500">DEVISE</span></h1>
-            <p class="text-[10px] opacity-30">VERSION_FORCE_CACHE_V4</p>
-        </header>
+    <div class="max-w-xl mx-auto pt-10">
+        <div class="text-[10px] text-center opacity-20 mb-4 uppercase tracking-widest">Version Mise à Jour : 10h18</div>
+        
+        <div class="glass p-6 shadow-2xl">
+            <h1 class="text-center font-black italic mb-8 uppercase">FLASH<span class="text-indigo-500">DEVISE</span></h1>
 
-        <div class="glass p-8 rounded-[2rem] mb-8">
-            <div class="flex flex-col md:flex-row gap-4 mb-8">
-                <input type="number" id="amount" value="1000" class="flex-1 bg-white/5 border border-white/10 p-4 rounded-xl text-2xl font-bold outline-none">
-                <select id="fromCurrency" class="bg-slate-800 p-4 rounded-xl font-bold border-none text-white"></select>
-                <select id="toCurrency" class="bg-slate-800 p-4 rounded-xl font-bold border-none text-white"></select>
+            <div class="space-y-4">
+                <input type="number" id="amount" value="1000" class="w-full bg-black/50 border border-white/10 p-4 rounded-xl text-3xl font-bold text-center outline-none">
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <select id="fromCurrency" class="bg-slate-800 p-3 rounded-xl border-none"></select>
+                    <select id="toCurrency" class="bg-slate-800 p-3 rounded-xl border-none"></select>
+                </div>
+
+                <div class="py-8 text-center border-t border-white/5 mt-4">
+                    <div id="resultValue" class="text-5xl font-black text-indigo-400">---</div>
+                    <div id="baseText" class="text-xs opacity-40 mt-2 uppercase tracking-widest">Calcul en cours...</div>
+                </div>
+
+                <a id="affiliateLink" href="#" target="_blank" class="flex items-center justify-center w-full py-5 bg-white text-black rounded-2xl font-black text-sm uppercase">
+                    <span id="logo-wise" class="fake-logo bg-wise">W</span>
+                    <span id="logo-binance" class="fake-logo bg-binance hidden">B</span>
+                    <span id="logo-revolut" class="fake-logo bg-revolut hidden">R</span>
+                    <span id="btnText">Chargement...</span>
+                </a>
             </div>
-            
-            <div class="text-center py-4 border-y border-white/5">
-                <div id="resultValue" class="text-5xl font-black text-indigo-400 mb-2">---</div>
-                <div id="baseText" class="text-[10px] font-bold opacity-40 uppercase tracking-widest">Calcul...</div>
-            </div>
-
-            <a id="affiliateLink" href="https://wise.com" target="_blank" class="flex items-center justify-center w-full py-5 bg-white text-black rounded-2xl font-black text-sm uppercase mt-8">
-                <span id="icon-wise" class="mr-3 text-xl">🔵</span>
-                <span id="icon-binance" class="mr-3 text-xl hidden">🟡</span>
-                <span id="icon-revolut" class="mr-3 text-xl hidden">⚪</span>
-                <span id="btnText">Ouvrir un compte Wise</span>
-            </a>
-        </div>
-
-        <div class="glass h-[400px] rounded-[2rem] overflow-hidden">
-            <div id="tradingview_chart" class="h-full w-full"></div>
         </div>
     </div>
 
+    <div class="max-w-xl mx-auto mt-6 h-64 glass overflow-hidden">
+        <div id="tradingview_chart" class="h-full w-full"></div>
+    </div>
+
     <script>
-        const coins = ["EUR", "USD", "GBP", "CHF", "BTC", "ETH", "XAU"];
+        const coins = ["EUR", "USD", "GBP", "BTC", "ETH", "XAU"];
 
         function updateUI(to) {
-            const iWise = document.getElementById('icon-wise');
-            const iBinance = document.getElementById('icon-binance');
-            const iRevolut = document.getElementById('icon-revolut');
+            const lWise = document.getElementById('logo-wise');
+            const lBinance = document.getElementById('logo-binance');
+            const lRevolut = document.getElementById('logo-revolut');
             const btnText = document.getElementById('btnText');
             const link = document.getElementById('affiliateLink');
 
-            // Cache tout
-            [iWise, iBinance, iRevolut].forEach(el => el.classList.add('hidden'));
+            // On cache tout
+            [lWise, lBinance, lRevolut].forEach(el => el.classList.add('hidden'));
 
             if (["BTC", "ETH"].includes(to)) {
-                iBinance.classList.remove('hidden');
-                btnText.innerText = "Check on Binance";
+                lBinance.classList.remove('hidden');
+                btnText.innerText = "Vérifier sur Binance";
                 link.href = "https://www.binance.com";
             } else if (to === "XAU") {
-                iRevolut.classList.remove('hidden');
-                btnText.innerText = "Invest via Revolut";
+                lRevolut.classList.remove('hidden');
+                btnText.innerText = "Investir via Revolut";
                 link.href = "https://www.revolut.com";
             } else {
-                iWise.classList.remove('hidden');
-                btnText.innerText = "Open Wise Account";
+                lWise.classList.remove('hidden');
+                btnText.innerText = "Transférer via Wise";
                 link.href = "https://wise.com";
             }
         }
@@ -82,15 +94,15 @@
             try {
                 const res = await fetch(`https://api.exchangerate-api.com/v4/latest/${from}`);
                 const data = await res.json();
-                const rate = data.rates[to] || 1;
+                const rate = data.rates[to];
                 document.getElementById('resultValue').innerText = (amount * rate).toLocaleString() + " " + to;
                 document.getElementById('baseText').innerText = `1 ${from} = ${rate.toFixed(4)} ${to}`;
                 
                 new TradingView.widget({
                     "autosize": true, "symbol": `${from}${to}`, "interval": "D", "theme": "dark",
-                    "container_id": "tradingview_chart", "style": "3", "backgroundColor": "#05070a"
+                    "container_id": "tradingview_chart", "style": "3", "backgroundColor": "#05070a", "hide_top_toolbar": true
                 });
-            } catch(e) { console.log("API Error"); }
+            } catch(e) {}
         }
 
         window.onload = function() {
@@ -99,7 +111,7 @@
             f.value = "EUR"; t.value = "USD";
             [f, t, document.getElementById('amount')].forEach(el => el.onchange = convert);
             convert();
-        };
+        }
     </script>
 </body>
 </html>
