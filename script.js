@@ -23,44 +23,43 @@ const translations = {
     }
 };
 
-// LOGOS CORRIGÉS (Liens directs stables)
-const logos = {
-    wise: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Wise_logo_on_blue.png/320px-Wise_logo_on_blue.png",
-    binance: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Binance_Logo.svg/320px-Binance_Logo.svg.png",
-    revolut: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Revolut_logo.svg/320px-Revolut_logo.svg.png"
-};
-
-let currentLang = localStorage.getItem('preferredLang') || 'fr';
 const cryptos = [{id:"bitcoin", symbol:"BTC"}, {id:"ethereum", symbol:"ETH"}, {id:"solana", symbol:"SOL"}];
 const metals = [{id:"gold", symbol:"XAU"}, {id:"silver", symbol:"XAG"}];
+let currentLang = localStorage.getItem('preferredLang') || 'fr';
 
 function updateAffiliateInfo(toCurrency) {
     const mainBtnText = document.getElementById('mainAffText');
-    const mainBtnLogo = document.getElementById('mainAffLogo');
-    const mainBtnLink = document.getElementById('mainAffiliateLink');
     const modalBtnText = document.getElementById('modalAffText');
-    const modalBtnLogo = document.getElementById('modalAffLogo');
+    const mainIcon = document.getElementById('mainAffIcon');
+    const modalIcon = document.getElementById('modalAffIcon');
+    const mainBtnLink = document.getElementById('mainAffiliateLink');
     const modalBtnLink = document.getElementById('modalAffiliateLink');
 
-    let text, logo, link;
+    let text, iconClass, color, link;
 
     if (cryptos.find(c => c.symbol === toCurrency)) {
         text = translations[currentLang]["buy-crypto"];
-        logo = logos.binance;
+        iconClass = "fab fa-bitcoin";
+        color = "#F3BA2F"; 
         link = "https://www.binance.com";
     } else if (metals.find(m => m.symbol === toCurrency)) {
         text = translations[currentLang]["buy-metal"];
-        logo = logos.revolut;
+        iconClass = "fas fa-gem";
+        color = "#ffffff";
         link = "https://www.revolut.com";
     } else {
         text = translations[currentLang]["buy-fiat"];
-        logo = logos.wise;
+        iconClass = "fas fa-university";
+        color = "#00b9ff";
         link = "https://wise.com";
     }
 
-    if(mainBtnText) [mainBtnText, modalBtnText].forEach(el => el.innerText = text);
-    if(mainBtnLogo) [mainBtnLogo, modalBtnLogo].forEach(el => el.src = logo);
-    if(mainBtnLink) [mainBtnLink, modalBtnLink].forEach(el => el.href = link);
+    if (mainBtnText) [mainBtnText, modalBtnText].forEach(el => el.innerText = text);
+    if (mainIcon) [mainIcon, modalIcon].forEach(el => {
+        el.className = iconClass + " text-lg";
+        el.style.color = color;
+    });
+    if (mainBtnLink) [mainBtnLink, modalBtnLink].forEach(el => el.href = link);
 }
 
 function showModal() { document.getElementById('shareModal').style.display = 'flex'; }
@@ -71,9 +70,7 @@ async function convert() {
     const from = document.getElementById('fromCurrency').value;
     const to = document.getElementById('toCurrency').value;
     if (!amount) return;
-
     updateAffiliateInfo(to);
-
     try {
         const res = await fetch(`https://api.exchangerate-api.com/v4/latest/USD`);
         const data = await res.json();
