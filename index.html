@@ -16,12 +16,12 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "WebApplication",
+      "@type": "FinancialService",
       "name": "FlashDevise",
       "url": "https://votre-domaine.com",
-      "description": "Terminal financier indépendant fournissant les taux de change, cryptos et métaux précieux en temps réel.",
+      "description": "Terminal financier indépendant fournissant les taux de change, cryptos et métaux précieux en temps réel avec analyses IA.",
       "applicationCategory": "FinanceApplication",
-      "operatingSystem": "All",
+      "currenciesAccepted": "EUR, USD, BTC, ETH, XAU, MAD, DZD",
       "offers": {
         "@type": "Offer",
         "price": "0",
@@ -56,6 +56,7 @@
         .lang-btn:hover, .lang-btn.active { filter: grayscale(0%); opacity: 1; transform: scale(1.1); }
         .ad-container { background: rgba(255,255,255,0.02); border-radius: 1rem; overflow: hidden; display: flex; justify-content: center; align-items: center; border: 1px dashed rgba(255,255,255,0.05); }
         .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0; }
     </style>
 </head>
 <body class="p-4 md:p-8">
@@ -94,10 +95,10 @@
 
     <main id="dashboard" class="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
         <div class="lg:col-span-4 space-y-6">
-            <div class="glass p-8 rounded-[2.5rem] border-indigo-500/10 shadow-2xl">
+            <section class="glass p-8 rounded-[2.5rem] border-indigo-500/10 shadow-2xl">
                 <h2 class="text-[10px] font-black uppercase text-slate-500 mb-8 tracking-widest text-center" data-key="calc-title">Convertisseur Universel</h2>
                 <div class="space-y-6">
-                    <input type="number" id="amount" value="1000" class="w-full bg-black/40 border border-white/10 p-5 rounded-2xl text-3xl font-black text-center outline-none focus:border-indigo-500/50 transition-all">
+                    <input type="number" id="amount" value="1000" aria-label="Montant" class="w-full bg-black/40 border border-white/10 p-5 rounded-2xl text-3xl font-black text-center outline-none focus:border-indigo-500/50 transition-all">
                     <div class="space-y-3">
                         <select id="fromCurrency" aria-label="Devise source"></select>
                         <select id="toCurrency" aria-label="Devise cible"></select>
@@ -107,7 +108,7 @@
                         <div id="baseText" class="text-[10px] text-indigo-400 font-bold uppercase tracking-widest" data-key="init-text">Chargement...</div>
                     </div>
                 </div>
-            </div>
+            </section>
 
             <div class="ad-container min-h-[250px] w-full">
                 <ins class="adsbygoogle"
@@ -140,16 +141,24 @@
 
     <section id="news" class="max-w-[1400px] mx-auto mt-24 pb-20 px-4">
         <div class="flex justify-between items-end mb-10">
-            <div>
+            <header>
                 <h2 class="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-500 mb-2" data-key="news-title">Analyses & Flux News</h2>
                 <p class="text-2xl font-black uppercase italic tracking-tighter text-white">Market Intelligence</p>
-            </div>
+            </header>
             <div class="flex gap-2 items-center">
                 <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
                 <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Live Connection</span>
             </div>
         </div>
-        <div id="news-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+        
+        <div id="news-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="sr-only">
+                <article>
+                    <h3>Analyse Forex et Crypto FlashDevise</h3>
+                    <p>Découvrez nos analyses en temps réel sur l'EUR/USD, le Bitcoin, l'Ethereum et le cours de l'Or. Nos algorithmes IA analysent les tendances de marché pour vous fournir les meilleurs taux de change.</p>
+                </article>
+            </div>
+        </div>
     </section>
 
     <footer id="about" class="max-w-[1400px] mx-auto py-20">
@@ -169,19 +178,17 @@
 
     <div id="shareModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
         <div class="glass max-w-md w-full p-10 rounded-[3rem] border border-white/20 text-center relative shadow-2xl">
-            <button onclick="closeModal('shareModal')" class="absolute top-6 right-6 text-slate-500 hover:text-white transition">
+            <button onclick="closeModal('shareModal')" class="absolute top-6 right-6 text-slate-500 hover:text-white transition" aria-label="Fermer">
                 <i class="fas fa-times text-lg"></i>
             </button>
             <h2 class="text-2xl font-black mb-2" data-key="modal-title">Taux Prêt !</h2>
             <p class="text-[11px] text-indigo-400 font-bold uppercase mb-8" data-key="modal-desc">Le taux a été actualisé avec succès.</p>
             <div class="grid grid-cols-2 gap-4 mb-8">
                 <button onclick="share('whatsapp')" class="flex flex-col items-center gap-2 py-4 bg-[#25D366]/10 text-[#25D366] rounded-2xl font-bold text-[10px] uppercase hover:bg-[#25D366]/20 transition">
-                    <i class="fab fa-whatsapp text-2xl"></i>
-                    WhatsApp
+                    <i class="fab fa-whatsapp text-2xl"></i> WhatsApp
                 </button>
                 <button onclick="share('telegram')" class="flex flex-col items-center gap-2 py-4 bg-[#0088cc]/10 text-[#0088cc] rounded-2xl font-bold text-[10px] uppercase hover:bg-[#0088cc]/20 transition">
-                    <i class="fab fa-telegram-plane text-2xl"></i>
-                    Telegram
+                    <i class="fab fa-telegram-plane text-2xl"></i> Telegram
                 </button>
             </div>
             <a id="modalAffiliateLink" href="#" target="_blank" class="flex items-center justify-center gap-3 w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase shadow-xl hover:bg-indigo-500 transition px-6">
@@ -193,7 +200,7 @@
 
     <div id="newsContentModal" class="fixed inset-0 z-[110] flex items-center justify-center p-4">
         <div class="glass max-w-2xl w-full p-8 md:p-12 rounded-[3rem] relative border border-white/20 overflow-y-auto max-h-[90vh] shadow-2xl">
-            <button onclick="closeModal('newsContentModal')" class="absolute top-8 right-8 text-slate-500 hover:text-white transition text-xl">
+            <button onclick="closeModal('newsContentModal')" class="absolute top-8 right-8 text-slate-500 hover:text-white transition text-xl" aria-label="Fermer">
                 <i class="fas fa-times"></i>
             </button>
             <div id="article-header" class="mb-8"></div>
