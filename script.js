@@ -125,6 +125,7 @@ function renderNewsContent(posts) {
     const ticker = document.getElementById('ticker');
     if(!container) return;
 
+    // Utilisation de balises <article> pour un meilleur SEO
     container.innerHTML = posts.map((p, index) => {
         const titleLower = p.title.toLowerCase();
         const isBearish = titleLower.match(/(drop|crash|down|bear|baisse|low|fall)/);
@@ -132,16 +133,16 @@ function renderNewsContent(posts) {
         const sentimentText = isBearish ? 'BEARISH' : 'BULLISH';
         
         return `
-            <div class="news-card glass p-6 rounded-[2rem] border border-white/5 flex flex-col justify-between" onclick="openArticle(${index})">
+            <article class="news-card glass p-6 rounded-[2rem] border border-white/5 flex flex-col justify-between" onclick="openArticle(${index})">
                 <div>
                     <div class="flex justify-between items-center mb-4">
                         <span class="text-[8px] font-black text-indigo-400 uppercase tracking-tighter">${p.source ? p.source.title : 'Market'}</span>
                         <span class="text-[8px] font-bold px-2 py-1 rounded-full ${sentimentClass}">${sentimentText}</span>
                     </div>
-                    <h4 class="text-[12px] font-bold leading-relaxed text-slate-200 line-clamp-3">${p.title}</h4>
+                    <h3 class="text-[12px] font-bold leading-relaxed text-slate-200 line-clamp-3">${p.title}</h3>
                 </div>
                 <div class="text-[9px] text-indigo-500 font-black mt-4 uppercase">Voir l'Analyse IA →</div>
-            </div>
+            </article>
         `;
     }).join('');
     
@@ -159,12 +160,12 @@ function openArticle(index) {
         <h2 class="text-2xl font-black mt-2 leading-tight uppercase italic text-white">${article.title}</h2>
     `;
 
-    // IA Analyse Content
+    // IA Analyse Content optimisé avec des mots-clés financiers
     const analysis = [
-        `D'après les données du terminal FlashDevise, "${article.title}" impacte actuellement la liquidité des paires liées. L'analyse algorithmique détecte un changement de volatilité significatif.`,
-        `Le momentum actuel, couplé aux indicateurs RSI, suggère une phase d'accumulation par les acteurs majeurs du marché.`,
-        `Techniquement, une consolidation au-dessus des pivots actuels validerait la poursuite de cette tendance pour les prochaines 24 heures.`,
-        `Note FlashDevise : Surveillez les volumes de clôture pour confirmer la force du mouvement.`
+        `D'après les données du terminal FlashDevise, "${article.title}" impacte actuellement la liquidité des paires liées. L'analyse algorithmique détecte un changement de volatilité significatif sur le marché.`,
+        `Le momentum actuel, couplé aux indicateurs RSI et aux supports techniques, suggère une phase d'accumulation stratégique par les acteurs majeurs.`,
+        `Techniquement, une consolidation au-dessus des pivots actuels validerait la poursuite de cette tendance haussière ou baissière pour les prochaines 24 heures.`,
+        `Note FlashDevise : Surveillez les volumes de clôture sur notre convertisseur en direct pour confirmer la force du mouvement.`
     ];
 
     body.innerHTML = analysis.map(text => `<p class="mb-4">${text}</p>`).join('');
@@ -180,6 +181,9 @@ function setLanguage(lang) {
     });
     document.querySelectorAll('.lang-btn').forEach(btn => {
         btn.classList.toggle('active', btn.id === `btn-${lang}`);
+        // Ajout d'alt pour le SEO sur les images de drapeaux
+        const img = btn.querySelector('img');
+        if(img) img.alt = lang === 'fr' ? 'Français' : 'English';
     });
     const toCurrency = document.getElementById('toCurrency')?.value;
     if(toCurrency) updateAffiliateInfo(toCurrency);
