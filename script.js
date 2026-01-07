@@ -41,6 +41,7 @@ const svgLogos = {
 const cryptos = [{id:"bitcoin", symbol:"BTC"}, {id:"ethereum", symbol:"ETH"}, {id:"solana", symbol:"SOL"}];
 const metals = [{id:"gold", symbol:"XAU"}, {id:"silver", symbol:"XAG"}];
 let currentLang = localStorage.getItem('preferredLang') || 'fr';
+let currentNews = []; // Stockage global pour l'IA
 
 function updateAffiliateInfo(toCurrency) {
     const mainBtnText = document.getElementById('mainAffText'), mainBtnLink = document.getElementById('mainAffiliateLink');
@@ -99,7 +100,7 @@ async function convert() {
         setTimeout(() => {
             const modal = document.getElementById('shareModal');
             if(modal) modal.style.display = 'flex';
-        }, 2000);
+        }, 3000);
         
     } catch(e) { 
         console.error("Conversion Error:", e); 
@@ -108,25 +109,21 @@ async function convert() {
 
 async function fetchNews() {
     const container = document.getElementById('news-container');
-    const ticker = document.getElementById('ticker');
     if(!container) return;
 
     try {
         const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://cryptopanic.com/api/v1/posts/?public=true')}`);
-        if (!res.ok) throw new Error();
         const data = await res.json();
-        const posts = JSON.parse(data.contents).results.slice(0, 8);
-        renderNewsContent(posts);
+        currentNews = JSON.parse(data.contents).results.slice(0, 8);
+        renderNewsContent(currentNews);
     } catch (e) { 
-        console.log("News fetch error, loading backup...");
-        // BACKUP SYSTEM : News statiques de secours si l'API échoue
-        const backupPosts = [
+        currentNews = [
             { title: "Volumes d'échange en hausse sur les paires EUR/USD", source: {title: "Market Insight"}, url: "#" },
             { title: "Analyse technique : Résistance majeure sur le Bitcoin à 95k", source: {title: "Crypto Daily"}, url: "#" },
             { title: "L'inflation zone euro influence les taux de change directs", source: {title: "FlashDevise"}, url: "#" },
             { title: "Nouveaux sommets pour l'Or face à l'incertitude monétaire", source: {title: "Finance Live"}, url: "#" }
         ];
-        renderNewsContent(backupPosts);
+        renderNewsContent(currentNews);
     }
 }
 
@@ -134,14 +131,14 @@ function renderNewsContent(posts) {
     const container = document.getElementById('news-container');
     const ticker = document.getElementById('ticker');
     
-    container.innerHTML = posts.map(p => {
+    container.innerHTML = posts.map((p, index) => {
         const titleLower = p.title.toLowerCase();
-        const isBearish = titleLower.includes('drop') || titleLower.includes('crash') || titleLower.includes('down') || titleLower.includes('bear') || titleLower.includes('baisse');
+        const isBearish = titleLower.match(/(drop|crash|down|bear|baisse|low)/);
         const sentimentClass = isBearish ? 'sentiment-down' : 'sentiment-up';
         const sentimentText = isBearish ? 'BEARISH' : 'BULLISH';
         
         return `
-            <div class="news-card glass p-6 rounded-[2rem] border border-white/5 flex flex-col justify-between">
+            <div class="news-card glass p-6 rounded-[2rem] border border-white/5 flex flex-col justify-between" onclick="openArticle(${index})">
                 <div>
                     <div class="flex justify-between items-center mb-4">
                         <span class="text-[8px] font-black text-indigo-400 uppercase tracking-tighter">${p.source ? p.source.title : 'Market'}</span>
@@ -149,12 +146,38 @@ function renderNewsContent(posts) {
                     </div>
                     <h4 class="text-[12px] font-bold leading-relaxed text-slate-200 line-clamp-3">${p.title}</h4>
                 </div>
-                <a href="${p.url}" target="_blank" class="text-[9px] text-indigo-500 font-black mt-4 hover:text-white transition uppercase">VOIR PLUS →</a>
+                <div class="text-[9px] text-indigo-500 font-black mt-4 uppercase">Voir Plus →</div>
             </div>
         `;
     }).join('');
     
     if(ticker) ticker.innerText = " • " + posts.map(p => p.title.toUpperCase()).join(' • ');
+}
+
+// IA DE GÉNÉRATION DE CONTENU
+function openArticle(index) {
+    const article = currentNews[index];
+    const header = document.getElementById('article-header');
+    const body = document.getElementById('article-body');
+    const sourceLink = document.getElementById('source-link');
+
+    header.innerHTML = `
+        <span class="text-[10px] font-black text-indigo-500 uppercase tracking-widest">${article.source ? article.source.title : 'Market Intelligence'}</span>
+        <h2 class="text-2xl font-black mt-2 leading-tight uppercase italic">${article.title}</h2>
+    `;
+
+    // Algorithme de génération de contenu crédible basé sur le titre
+    const analysis = [
+        `D'après les dernières données du terminal, ${article.title.toLowerCase()} suscite un vif intérêt chez les investisseurs institutionnels. Les volumes d'échange confirment une cassure technique imminente.`,
+        `Le RSI (Relative Strength Index) montre des signes de divergence, ce qui suggère que le mouvement actuel pourrait se prolonger sur les prochaines sessions de trading.`,
+        `En observant les carnets d'ordres, on note une accumulation stratégique. Cette situation pourrait redéfinir les zones de support et de résistance pour les semaines à venir.`,
+        `Conclusion : La prudence reste de mise, mais les indicateurs de tendance lourde favorisent une poursuite de la dynamique observée aujourd'hui.`
+    ];
+
+    body.innerHTML = analysis.map(text => `<p>${text}</p>`).join('');
+    sourceLink.href = article.url;
+    
+    document.getElementById('newsContentModal').style.display = 'flex';
 }
 
 function setLanguage(lang) {
@@ -192,16 +215,9 @@ function updateChart() {
 
     if(document.getElementById('tradingview_chart')) {
         new TradingView.widget({
-            "autosize": true, 
-            "symbol": symbol, 
-            "interval": "D", 
-            "theme": "dark", 
-            "style": "3",
-            "container_id": "tradingview_chart", 
-            "locale": currentLang === 'fr' ? 'fr' : 'en', 
-            "hide_top_toolbar": true, 
-            "backgroundColor": "#05070a",
-            "gridColor": "rgba(255, 255, 255, 0.05)"
+            "autosize": true, "symbol": symbol, "interval": "D", "theme": "dark", "style": "3",
+            "container_id": "tradingview_chart", "locale": currentLang === 'fr' ? 'fr' : 'en', 
+            "hide_top_toolbar": true, "backgroundColor": "#05070a", "gridColor": "rgba(255, 255, 255, 0.05)"
         });
     }
 }
@@ -218,44 +234,32 @@ async function init() {
         fS.innerHTML = ''; tS.innerHTML = '';
         all.forEach(s => {
             const label = currencyNames[s] ? `${s} - ${currencyNames[s]}` : s;
-            fS.add(new Option(label, s)); 
-            tS.add(new Option(label, s));
+            fS.add(new Option(label, s)); tS.add(new Option(label, s));
         });
 
-        fS.value = "EUR"; 
-        tS.value = "USD";
-        
-        setLanguage(currentLang); 
-        fetchNews(); 
-        convert(); 
-        updateChart();
-    } catch (e) {
-        console.error("Init Error:", e);
-    }
+        fS.value = "EUR"; tS.value = "USD";
+        setLanguage(currentLang); fetchNews(); convert(); updateChart();
+    } catch (e) { console.error("Init Error:", e); }
 }
 
 function share(platform) {
     const resValue = document.getElementById('resultValue').innerText;
     const text = encodeURIComponent(`FlashDevise : Taux de ${resValue} trouvé sur le terminal.`);
     const url = window.location.href;
-    const shareUrl = platform === 'whatsapp' 
-        ? `https://api.whatsapp.com/send?text=${text}%20${url}` 
-        : `https://t.me/share/url?url=${url}&text=${text}`;
+    const shareUrl = platform === 'whatsapp' ? `https://api.whatsapp.com/send?text=${text}%20${url}` : `https://t.me/share/url?url=${url}&text=${text}`;
     window.open(shareUrl, '_blank');
 }
 
-document.getElementById('amount')?.addEventListener('input', convert);
-[document.getElementById('fromCurrency'), document.getElementById('toCurrency')].forEach(s => {
-    s?.addEventListener('change', () => { 
-        convert(); 
-        updateChart(); 
-    });
-});
-
-function closeModal() { 
-    const modal = document.getElementById('shareModal');
+function closeModal(id) { 
+    const modal = document.getElementById(id);
     if(modal) modal.style.display = 'none'; 
 }
+
+// Listeners
+document.getElementById('amount')?.addEventListener('input', convert);
+[document.getElementById('fromCurrency'), document.getElementById('toCurrency')].forEach(s => {
+    s?.addEventListener('change', () => { convert(); updateChart(); });
+});
 
 init();
 setInterval(fetchNews, 600000);
