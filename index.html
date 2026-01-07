@@ -4,8 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>FlashDevise | Terminal Financier & Convertisseur Temps Réel</title>
-    <meta name="description" content="Accédez aux taux de change réels, cryptos et métaux. Analyses de marché en direct et graphiques TradingView.">
+    <title>FlashDevise | Convertisseur de Devises Temps Réel, Crypto & Métaux</title>
+    <meta name="description" content="Accédez aux taux de change réels, prix du Bitcoin et cours de l'or en direct. Terminal financier avec analyses de marché IA et graphiques TradingView gratuits.">
+    <meta name="keywords" content="convertisseur devise, taux de change direct, cours du bitcoin, prix de l'or, forex, FlashDevise, finance terminal">
+    <link rel="canonical" href="https://votre-domaine.com" />
+
+    <meta property="og:title" content="FlashDevise | Terminal Financier Temps Réel">
+    <meta property="og:description" content="Convertisseur universel et analyses de marché en direct.">
+    <meta property="og:type" content="website">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "FlashDevise",
+      "url": "https://votre-domaine.com",
+      "description": "Terminal financier indépendant fournissant les taux de change, cryptos et métaux précieux en temps réel.",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "EUR"
+      }
+    }
+    </script>
     
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="shortcut icon" type="image/png" href="favicon.png">
@@ -21,22 +44,16 @@
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #05070a; color: white; scroll-behavior: smooth; overflow-x: hidden; }
         .glass { background: rgba(15, 20, 28, 0.95); border: 1px solid rgba(255, 255, 255, 0.08); backdrop-filter: blur(10px); }
-        
         select { background-color: #1a1f26 !important; color: white !important; border: 1px solid rgba(255,255,255,0.1) !important; padding: 14px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; font-size: 13px; appearance: none; outline: none; }
-        
         .news-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%); }
         .news-card:hover { transform: translateY(-5px); border-color: rgba(99, 102, 241, 0.4); background: rgba(255,255,255,0.06); }
         .sentiment-up { color: #10b981; background: rgba(16, 185, 129, 0.1); }
         .sentiment-down { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
-
         @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
         .animate-marquee { display: inline-block; animation: marquee 40s linear infinite; white-space: nowrap; width: max-content; }
-        
         #shareModal, #newsContentModal { display: none; background: rgba(0,0,0,0.95); backdrop-filter: blur(15px); }
-        
         .lang-btn { filter: grayscale(100%); transition: all 0.3s ease; opacity: 0.6; }
         .lang-btn:hover, .lang-btn.active { filter: grayscale(0%); opacity: 1; transform: scale(1.1); }
-        
         .ad-container { background: rgba(255,255,255,0.02); border-radius: 1rem; overflow: hidden; display: flex; justify-content: center; align-items: center; border: 1px dashed rgba(255,255,255,0.05); }
         .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
     </style>
@@ -44,7 +61,8 @@
 <body class="p-4 md:p-8">
 
     <header class="max-w-[1400px] mx-auto flex justify-between items-center mb-10">
-        <div class="text-xl font-black italic tracking-tighter uppercase">FLASH<span class="text-indigo-500">DEVISE</span></div>
+        <h1 class="text-xl font-black italic tracking-tighter uppercase">FLASH<span class="text-indigo-500">DEVISE</span></h1>
+        
         <nav class="hidden md:flex gap-8 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
             <a href="#dashboard" data-key="nav-dash" class="hover:text-indigo-400 transition">Marchés</a>
             <a href="#about" data-key="nav-about" class="hover:text-indigo-400 transition">À Propos</a>
@@ -53,12 +71,12 @@
         
         <div class="flex gap-4 items-center bg-white/5 px-4 py-2 rounded-full border border-white/10">
             <button onclick="setLanguage('fr')" id="btn-fr" class="lang-btn flex items-center gap-2">
-                <img src="https://flagcdn.com/w40/fr.png" width="20" class="rounded-full shadow-sm">
+                <img src="https://flagcdn.com/w40/fr.png" width="20" alt="Français" class="rounded-full shadow-sm">
                 <span class="text-[10px] font-black">FR</span>
             </button>
             <div class="w-[1px] h-4 bg-white/10"></div>
             <button onclick="setLanguage('en')" id="btn-en" class="lang-btn flex items-center gap-2">
-                <img src="https://flagcdn.com/w40/gb.png" width="20" class="rounded-full shadow-sm">
+                <img src="https://flagcdn.com/w40/gb.png" width="20" alt="English" class="rounded-full shadow-sm">
                 <span class="text-[10px] font-black">EN</span>
             </button>
         </div>
@@ -81,8 +99,8 @@
                 <div class="space-y-6">
                     <input type="number" id="amount" value="1000" class="w-full bg-black/40 border border-white/10 p-5 rounded-2xl text-3xl font-black text-center outline-none focus:border-indigo-500/50 transition-all">
                     <div class="space-y-3">
-                        <select id="fromCurrency"></select>
-                        <select id="toCurrency"></select>
+                        <select id="fromCurrency" aria-label="Devise source"></select>
+                        <select id="toCurrency" aria-label="Devise cible"></select>
                     </div>
                     <div class="pt-8 border-t border-white/5 text-center">
                         <div id="resultValue" class="text-5xl font-black mb-2 tracking-tighter text-white">---</div>
@@ -101,13 +119,13 @@
                 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
             </div>
 
-            <div class="glass p-8 rounded-[2.5rem] bg-indigo-500/5 border border-white/5 text-center">
+            <section class="glass p-8 rounded-[2.5rem] bg-indigo-500/5 border border-white/5 text-center">
                 <h3 class="text-[10px] font-black text-indigo-300 uppercase tracking-widest mb-4" data-key="aff-title">Meilleure Exécution</h3>
                 <a id="mainAffiliateLink" href="#" target="_blank" class="flex items-center justify-center gap-3 w-full py-4 bg-white text-black text-[11px] font-black uppercase rounded-xl hover:bg-indigo-50 transition shadow-lg px-6">
                     <div id="mainAffIcon"></div>
                     <span id="mainAffText">Chargement...</span>
                 </a>
-            </div>
+            </section>
         </div>
 
         <div class="lg:col-span-8">
@@ -123,7 +141,7 @@
     <section id="news" class="max-w-[1400px] mx-auto mt-24 pb-20 px-4">
         <div class="flex justify-between items-end mb-10">
             <div>
-                <h3 class="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-500 mb-2" data-key="news-title">Analyses & Flux News</h3>
+                <h2 class="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-500 mb-2" data-key="news-title">Analyses & Flux News</h2>
                 <p class="text-2xl font-black uppercase italic tracking-tighter text-white">Market Intelligence</p>
             </div>
             <div class="flex gap-2 items-center">
@@ -178,11 +196,8 @@
             <button onclick="closeModal('newsContentModal')" class="absolute top-8 right-8 text-slate-500 hover:text-white transition text-xl">
                 <i class="fas fa-times"></i>
             </button>
-            
             <div id="article-header" class="mb-8"></div>
-            
             <div id="article-body" class="text-slate-300 text-sm leading-relaxed space-y-4 font-medium uppercase tracking-tight"></div>
-            
             <div class="mt-10 pt-8 border-t border-white/10 flex flex-wrap gap-4">
                 <a id="source-link" href="#" target="_blank" class="px-8 py-4 bg-white/5 hover:bg-white/10 text-indigo-400 rounded-xl text-[10px] font-black uppercase tracking-widest transition border border-indigo-500/20">Lire la source originale</a>
                 <button onclick="closeModal('newsContentModal')" class="px-8 py-4 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition">Retour au Marché</button>
