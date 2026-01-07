@@ -32,7 +32,6 @@
         @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
         .animate-marquee { display: inline-block; animation: marquee 40s linear infinite; white-space: nowrap; width: max-content; }
         
-        /* Modals State */
         #shareModal, #newsContentModal { display: none; background: rgba(0,0,0,0.95); backdrop-filter: blur(15px); }
         
         .lang-btn { filter: grayscale(100%); transition: all 0.3s ease; opacity: 0.6; }
@@ -76,7 +75,6 @@
     </div>
 
     <main id="dashboard" class="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
         <div class="lg:col-span-4 space-y-6">
             <div class="glass p-8 rounded-[2.5rem] border-indigo-500/10 shadow-2xl">
                 <h2 class="text-[10px] font-black uppercase text-slate-500 mb-8 tracking-widest text-center" data-key="calc-title">Convertisseur Universel</h2>
@@ -136,17 +134,6 @@
         <div id="news-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
     </section>
 
-    <div class="max-w-[1400px] mx-auto my-12 text-center border-t border-white/5 pt-12">
-        <div class="ad-container min-h-[200px] w-full">
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-format="autorelaxed"
-                 data-ad-client="ca-pub-1514465539874199"
-                 data-ad-slot="8412098550"></ins>
-            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-        </div>
-    </div>
-
     <footer id="about" class="max-w-[1400px] mx-auto py-20">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
@@ -164,12 +151,20 @@
 
     <div id="shareModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
         <div class="glass max-w-md w-full p-10 rounded-[3rem] border border-white/20 text-center relative shadow-2xl">
-            <button onclick="closeModal('shareModal')" class="absolute top-6 right-6 text-slate-500 hover:text-white transition"><i class="fas fa-times"></i></button>
+            <button onclick="closeModal('shareModal')" class="absolute top-6 right-6 text-slate-500 hover:text-white transition">
+                <i class="fas fa-times text-lg"></i>
+            </button>
             <h2 class="text-2xl font-black mb-2" data-key="modal-title">Taux Prêt !</h2>
             <p class="text-[11px] text-indigo-400 font-bold uppercase mb-8" data-key="modal-desc">Le taux a été actualisé avec succès.</p>
             <div class="grid grid-cols-2 gap-4 mb-8">
-                <button onclick="share('whatsapp')" class="py-4 bg-[#25D366]/10 text-[#25D366] rounded-2xl font-bold text-[10px] uppercase hover:bg-[#25D366]/20 transition">WhatsApp</button>
-                <button onclick="share('telegram')" class="py-4 bg-[#0088cc]/10 text-[#0088cc] rounded-2xl font-bold text-[10px] uppercase hover:bg-[#0088cc]/20 transition">Telegram</button>
+                <button onclick="share('whatsapp')" class="flex flex-col items-center gap-2 py-4 bg-[#25D366]/10 text-[#25D366] rounded-2xl font-bold text-[10px] uppercase hover:bg-[#25D366]/20 transition">
+                    <i class="fab fa-whatsapp text-2xl"></i>
+                    WhatsApp
+                </button>
+                <button onclick="share('telegram')" class="flex flex-col items-center gap-2 py-4 bg-[#0088cc]/10 text-[#0088cc] rounded-2xl font-bold text-[10px] uppercase hover:bg-[#0088cc]/20 transition">
+                    <i class="fab fa-telegram-plane text-2xl"></i>
+                    Telegram
+                </button>
             </div>
             <a id="modalAffiliateLink" href="#" target="_blank" class="flex items-center justify-center gap-3 w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase shadow-xl hover:bg-indigo-500 transition px-6">
                 <div id="modalAffIcon"></div>
@@ -180,13 +175,13 @@
 
     <div id="newsContentModal" class="fixed inset-0 z-[110] flex items-center justify-center p-4">
         <div class="glass max-w-2xl w-full p-8 md:p-12 rounded-[3rem] relative border border-white/20 overflow-y-auto max-h-[90vh] shadow-2xl">
-            <button onclick="closeModal('newsContentModal')" class="absolute top-8 right-8 text-slate-500 hover:text-white transition text-xl"><i class="fas fa-times"></i></button>
+            <button onclick="closeModal('newsContentModal')" class="absolute top-8 right-8 text-slate-500 hover:text-white transition text-xl">
+                <i class="fas fa-times"></i>
+            </button>
             
-            <div id="article-header" class="mb-8">
-                </div>
+            <div id="article-header" class="mb-8"></div>
             
-            <div id="article-body" class="text-slate-300 text-sm leading-relaxed space-y-4 font-medium uppercase tracking-tight">
-                </div>
+            <div id="article-body" class="text-slate-300 text-sm leading-relaxed space-y-4 font-medium uppercase tracking-tight"></div>
             
             <div class="mt-10 pt-8 border-t border-white/10 flex flex-wrap gap-4">
                 <a id="source-link" href="#" target="_blank" class="px-8 py-4 bg-white/5 hover:bg-white/10 text-indigo-400 rounded-xl text-[10px] font-black uppercase tracking-widest transition border border-indigo-500/20">Lire la source originale</a>
