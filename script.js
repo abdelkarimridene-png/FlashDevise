@@ -35,7 +35,7 @@ const currencyNames = {
 const svgLogos = {
     binance: `<svg viewBox="0 0 24 24" fill="#F0B90B" class="h-5 w-5"><path d="M16.624 13.9202l-4.624 4.624-4.624-4.624-2.147 2.147L12 23.3333l7.271-7.2661-2.647-2.147zm4.624-4.624L24 12l-2.752 2.704-2.147-2.147 2.147-2.257zm-18.496 0L0 12l2.752 2.704 2.147-2.147-2.147-2.257zm9.248-9.2962L19.271 7.2661l-2.647 2.147L12 4.7889l-4.624 4.624-2.647-2.147L12 0zm0 6.1364l2.647 2.647L12 11.4304l-2.647-2.647L12 6.1364zm7.271 3.1116l2.147 2.147-2.147 2.147-2.147-2.147 2.147-2.147zm-14.542 0l2.147 2.147-2.147 2.147-2.147-2.147 2.147-2.147z"/></svg>`,
     wise: `<svg viewBox="0 0 24 24" fill="#00B5FF" class="h-5 w-5"><path d="M12 0L8.63 8.37L0 14.5L13.12 14.5L14.75 24L18.12 15.63L24 9.5L12.37 9.5L12 0Z"/></svg>`,
-    revolut: `<svg viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5"><path d="M19.333 3.333H4.667C3.931 3.333 3.333 3.931 3.333 4.667v14.666c0 .736.598 1.334 1.334 1.334h14.666c.736 0 1.334-.598 1.334-1.334V4.667c0-.736-.598-1.334-1.334-1.334zm-7.333 13.334l-3.333-3.334h6.666l-3.333 3.334z"/></svg>`
+    revolut: `<svg viewBox="0 0 24 24" fill="white" class="h-5 w-5"><path d="M19.333 3.333H4.667C3.931 3.333 3.333 3.931 3.333 4.667v14.666c0 .736.598 1.334 1.334 1.334h14.666c.736 0 1.334-.598 1.334-1.334V4.667c0-.736-.598-1.334-1.334-1.334zm-7.333 13.334l-3.333-3.334h6.666l-3.333 3.334z"/></svg>`
 };
 
 const cryptos = [{id:"bitcoin", symbol:"BTC"}, {id:"ethereum", symbol:"ETH"}, {id:"solana", symbol:"SOL"}];
@@ -55,46 +55,81 @@ function updateAffiliateInfo(toCurrency) {
     } else {
         text = translations[currentLang]["buy-fiat"]; link = "https://wise.com"; icon = svgLogos.wise;
     }
-    [mainBtnText, modalBtnText].forEach(el => { if(el) el.innerText = text; });
-    [mainBtnLink, modalBtnLink].forEach(el => { if(el) el.href = link; });
-    [mainIcon, modalIcon].forEach(el => { if(el) el.innerHTML = icon; });
+    
+    if(mainBtnText) mainBtnText.innerText = text;
+    if(modalBtnText) modalBtnText.innerText = text;
+    if(mainBtnLink) mainBtnLink.href = link;
+    if(modalBtnLink) modalBtnLink.href = link;
+    if(mainIcon) mainIcon.innerHTML = icon;
+    if(modalIcon) modalIcon.innerHTML = icon;
 }
 
 async function convert() {
-    const amount = document.getElementById('amount').value, from = document.getElementById('fromCurrency').value, to = document.getElementById('toCurrency').value;
-    if (!amount) return;
+    const amountInput = document.getElementById('amount');
+    const amount = amountInput ? amountInput.value : 0;
+    const from = document.getElementById('fromCurrency').value;
+    const to = document.getElementById('toCurrency').value;
+    
+    if (!amount || amount <= 0) return;
+    
     updateAffiliateInfo(to);
+    
     try {
-        const res = await fetch(`https://api.exchangerate-api.com/v4/latest/USD`), data = await res.json();
+        const res = await fetch(`https://api.exchangerate-api.com/v4/latest/USD`);
+        const data = await res.json();
+        
         const getP = async (s) => {
             const c = cryptos.find(i => i.symbol === s);
             if(c){
-                const r = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${c.id}&vs_currencies=usd`), d = await r.json(); return d[c.id].usd;
+                const r = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${c.id}&vs_currencies=usd`);
+                const d = await r.json(); 
+                return d[c.id].usd;
             }
+            if(s === "XAU") return 2050; // Fallback Gold Price
+            if(s === "XAG") return 23.50; // Fallback Silver Price
             return 1 / data.rates[s];
         };
-        const rate = (await getP(from)) / (await getP(to));
+
+        const priceFrom = await getP(from);
+        const priceTo = await getP(to);
+        const rate = priceFrom / priceTo;
+        
         document.getElementById('resultValue').innerText = (amount * rate).toLocaleString(undefined, {maximumFractionDigits: 2}) + " " + to;
         document.getElementById('baseText').innerText = `1 ${from} = ${rate.toFixed(4)} ${to}`;
-        setTimeout(() => document.getElementById('shareModal').style.display = 'flex', 2000);
-    } catch(e) { console.error(e); }
+        
+        // Affichage du modal après un court délai
+        setTimeout(() => {
+            const modal = document.getElementById('shareModal');
+            if(modal) modal.style.display = 'flex';
+        }, 2000);
+        
+    } catch(e) { 
+        console.error("Conversion Error:", e); 
+    }
 }
 
 async function fetchNews() {
-    const container = document.getElementById('news-container'), ticker = document.getElementById('ticker');
+    const container = document.getElementById('news-container');
+    const ticker = document.getElementById('ticker');
+    if(!container) return;
+
     try {
         const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://cryptopanic.com/api/v1/posts/?public=true')}`);
         const data = await res.json();
         const posts = JSON.parse(data.contents).results.slice(0, 8);
 
         container.innerHTML = posts.map(p => {
-            const isBearish = p.title.toLowerCase().includes('drop') || p.title.toLowerCase().includes('crash');
+            const titleLower = p.title.toLowerCase();
+            const isBearish = titleLower.includes('drop') || titleLower.includes('crash') || titleLower.includes('down') || titleLower.includes('bear');
+            const sentimentClass = isBearish ? 'sentiment-down' : 'sentiment-up';
+            const sentimentText = isBearish ? 'BEARISH' : 'BULLISH';
+            
             return `
                 <div class="news-card glass p-6 rounded-[2rem] border border-white/5 flex flex-col justify-between">
                     <div>
                         <div class="flex justify-between items-center mb-4">
                             <span class="text-[8px] font-black text-indigo-400 uppercase tracking-tighter">${p.source.title}</span>
-                            <span class="text-[8px] font-bold px-2 py-1 rounded-full ${isBearish ? 'sentiment-down' : 'sentiment-up'}">${isBearish ? 'BEARISH' : 'BULLISH'}</span>
+                            <span class="text-[8px] font-bold px-2 py-1 rounded-full ${sentimentClass}">${sentimentText}</span>
                         </div>
                         <h4 class="text-[12px] font-bold leading-relaxed text-slate-200 line-clamp-3">${p.title}</h4>
                     </div>
@@ -102,49 +137,122 @@ async function fetchNews() {
                 </div>
             `;
         }).join('');
-        ticker.innerText = " • " + posts.map(p => p.title.toUpperCase()).join(' • ');
-    } catch (e) { console.log("News error"); }
+        
+        if(ticker) ticker.innerText = " • " + posts.map(p => p.title.toUpperCase()).join(' • ');
+    } catch (e) { 
+        console.log("News fetch error");
+        container.innerHTML = `<p class="col-span-full text-center text-slate-500 text-xs uppercase font-bold">Flux temporairement indisponible</p>`;
+    }
 }
 
 function setLanguage(lang) {
-    currentLang = lang; localStorage.setItem('preferredLang', lang);
+    currentLang = lang; 
+    localStorage.setItem('preferredLang', lang);
+    
     document.querySelectorAll('[data-key]').forEach(el => {
         const key = el.getAttribute('data-key');
         if (translations[lang][key]) el.innerText = translations[lang][key];
     });
+
+    // Mise à jour visuelle des boutons de langue
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('onclick').includes(lang));
+    });
+
+    // Rafraîchir les textes d'affiliation
+    const toCurrency = document.getElementById('toCurrency')?.value;
+    if(toCurrency) updateAffiliateInfo(toCurrency);
 }
 
 function updateChart() {
-    const from = document.getElementById('fromCurrency').value, to = document.getElementById('toCurrency').value;
-    let symbol = `FX_IDC:${from}${to}`;
-    if (from === "BTC" || to === "BTC") symbol = "BINANCE:BTCUSDT";
-    new TradingView.widget({
-        "autosize": true, "symbol": symbol, "interval": "D", "theme": "dark", "style": "3",
-        "container_id": "tradingview_chart", "locale": currentLang, "hide_top_toolbar": true, "backgroundColor": "#05070a"
-    });
+    const from = document.getElementById('fromCurrency').value;
+    const to = document.getElementById('toCurrency').value;
+    let symbol;
+
+    // Logique de sélection de symbole TradingView
+    if (from === "BTC" || from === "ETH" || from === "SOL") {
+        symbol = `BINANCE:${from}USDT`;
+    } else if (to === "BTC" || to === "ETH" || to === "SOL") {
+        symbol = `BINANCE:${to}USDT`;
+    } else if (from === "XAU" || to === "XAU") {
+        symbol = "OANDA:XAUUSD";
+    } else {
+        symbol = `FX_IDC:${from}${to}`;
+    }
+
+    if(document.getElementById('tradingview_chart')) {
+        new TradingView.widget({
+            "autosize": true, 
+            "symbol": symbol, 
+            "interval": "D", 
+            "theme": "dark", 
+            "style": "3",
+            "container_id": "tradingview_chart", 
+            "locale": currentLang === 'fr' ? 'fr' : 'en', 
+            "hide_top_toolbar": true, 
+            "backgroundColor": "#05070a",
+            "gridColor": "rgba(255, 255, 255, 0.05)"
+        });
+    }
 }
 
 async function init() {
-    const fS = document.getElementById('fromCurrency'), tS = document.getElementById('toCurrency');
-    const res = await fetch(`https://api.exchangerate-api.com/v4/latest/USD`), data = await res.json();
-    const all = [...Object.keys(data.rates), "BTC", "ETH", "SOL", "XAU", "XAG"].sort();
-    all.forEach(s => {
-        const label = currencyNames[s] ? `${s} - ${currencyNames[s]}` : s;
-        fS.add(new Option(label, s)); tS.add(new Option(label, s));
-    });
-    fS.value = "EUR"; tS.value = "USD";
-    setLanguage(currentLang); fetchNews(); convert(); updateChart();
+    try {
+        const fS = document.getElementById('fromCurrency'), tS = document.getElementById('toCurrency');
+        if(!fS || !tS) return;
+
+        const res = await fetch(`https://api.exchangerate-api.com/v4/latest/USD`);
+        const data = await res.json();
+        
+        const all = [...Object.keys(data.rates), "BTC", "ETH", "SOL", "XAU", "XAG"].sort();
+        
+        // Nettoyer les selects avant remplissage
+        fS.innerHTML = ''; tS.innerHTML = '';
+        
+        all.forEach(s => {
+            const label = currencyNames[s] ? `${s} - ${currencyNames[s]}` : s;
+            fS.add(new Option(label, s)); 
+            tS.add(new Option(label, s));
+        });
+
+        // Valeurs par défaut
+        fS.value = "EUR"; 
+        tS.value = "USD";
+        
+        setLanguage(currentLang); 
+        fetchNews(); 
+        convert(); 
+        updateChart();
+    } catch (e) {
+        console.error("Init Error:", e);
+    }
 }
 
 function share(platform) {
     const res = document.getElementById('resultValue').innerText;
-    const text = encodeURIComponent(`FlashDevise : Taux de ${res} trouvé.`);
-    const url = platform === 'whatsapp' ? `https://api.whatsapp.com/send?text=${text}` : `https://t.me/share/url?url=${window.location.href}&text=${text}`;
-    window.open(url, '_blank');
+    const text = encodeURIComponent(`FlashDevise : Taux de ${res} trouvé sur le terminal.`);
+    const url = window.location.href;
+    const shareUrl = platform === 'whatsapp' 
+        ? `https://api.whatsapp.com/send?text=${text}%20${url}` 
+        : `https://t.me/share/url?url=${url}&text=${text}`;
+    window.open(shareUrl, '_blank');
 }
 
-document.getElementById('amount').addEventListener('change', convert);
-[document.getElementById('fromCurrency'), document.getElementById('toCurrency')].forEach(s => s.addEventListener('change', () => { convert(); updateChart(); }));
-function closeModal() { document.getElementById('shareModal').style.display = 'none'; }
+// Listeners
+document.getElementById('amount')?.addEventListener('input', convert);
+[document.getElementById('fromCurrency'), document.getElementById('toCurrency')].forEach(s => {
+    s?.addEventListener('change', () => { 
+        convert(); 
+        updateChart(); 
+    });
+});
+
+function closeModal() { 
+    const modal = document.getElementById('shareModal');
+    if(modal) modal.style.display = 'none'; 
+}
+
+// Lancement
 init();
+// Refresh des news toutes les 10 minutes
 setInterval(fetchNews, 600000);
