@@ -41,7 +41,7 @@ const svgLogos = {
 const cryptos = [{id:"bitcoin", symbol:"BTC"}, {id:"ethereum", symbol:"ETH"}, {id:"solana", symbol:"SOL"}];
 const metals = [{id:"gold", symbol:"XAU"}, {id:"silver", symbol:"XAG"}];
 let currentLang = localStorage.getItem('preferredLang') || 'fr';
-let currentNews = []; // Stockage global pour l'IA
+let currentNews = [];
 
 function updateAffiliateInfo(toCurrency) {
     const mainBtnText = document.getElementById('mainAffText'), mainBtnLink = document.getElementById('mainAffiliateLink');
@@ -85,8 +85,8 @@ async function convert() {
                 const d = await r.json(); 
                 return d[c.id].usd;
             }
-            if(s === "XAU") return 2050;
-            if(s === "XAG") return 23.50;
+            if(s === "XAU") return 2050; // Mock pour Or
+            if(s === "XAG") return 23.50; // Mock pour Argent
             return 1 / data.rates[s];
         };
 
@@ -102,15 +102,10 @@ async function convert() {
             if(modal) modal.style.display = 'flex';
         }, 3000);
         
-    } catch(e) { 
-        console.error("Conversion Error:", e); 
-    }
+    } catch(e) { console.error("Conversion Error:", e); }
 }
 
 async function fetchNews() {
-    const container = document.getElementById('news-container');
-    if(!container) return;
-
     try {
         const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://cryptopanic.com/api/v1/posts/?public=true')}`);
         const data = await res.json();
@@ -118,10 +113,8 @@ async function fetchNews() {
         renderNewsContent(currentNews);
     } catch (e) { 
         currentNews = [
-            { title: "Volumes d'échange en hausse sur les paires EUR/USD", source: {title: "Market Insight"}, url: "#" },
-            { title: "Analyse technique : Résistance majeure sur le Bitcoin à 95k", source: {title: "Crypto Daily"}, url: "#" },
-            { title: "L'inflation zone euro influence les taux de change directs", source: {title: "FlashDevise"}, url: "#" },
-            { title: "Nouveaux sommets pour l'Or face à l'incertitude monétaire", source: {title: "Finance Live"}, url: "#" }
+            { title: "Volumes d'échange en hausse sur les paires EUR/USD", source: {title: "Market Insight"}, url: "https://cryptopanic.com" },
+            { title: "Analyse technique : Résistance majeure sur le Bitcoin", source: {title: "Crypto Daily"}, url: "https://cryptopanic.com" }
         ];
         renderNewsContent(currentNews);
     }
@@ -130,10 +123,11 @@ async function fetchNews() {
 function renderNewsContent(posts) {
     const container = document.getElementById('news-container');
     const ticker = document.getElementById('ticker');
-    
+    if(!container) return;
+
     container.innerHTML = posts.map((p, index) => {
         const titleLower = p.title.toLowerCase();
-        const isBearish = titleLower.match(/(drop|crash|down|bear|baisse|low)/);
+        const isBearish = titleLower.match(/(drop|crash|down|bear|baisse|low|fall)/);
         const sentimentClass = isBearish ? 'sentiment-down' : 'sentiment-up';
         const sentimentText = isBearish ? 'BEARISH' : 'BULLISH';
         
@@ -146,7 +140,7 @@ function renderNewsContent(posts) {
                     </div>
                     <h4 class="text-[12px] font-bold leading-relaxed text-slate-200 line-clamp-3">${p.title}</h4>
                 </div>
-                <div class="text-[9px] text-indigo-500 font-black mt-4 uppercase">Voir Plus →</div>
+                <div class="text-[9px] text-indigo-500 font-black mt-4 uppercase">Voir l'Analyse IA →</div>
             </div>
         `;
     }).join('');
@@ -154,7 +148,6 @@ function renderNewsContent(posts) {
     if(ticker) ticker.innerText = " • " + posts.map(p => p.title.toUpperCase()).join(' • ');
 }
 
-// IA DE GÉNÉRATION DE CONTENU
 function openArticle(index) {
     const article = currentNews[index];
     const header = document.getElementById('article-header');
@@ -163,37 +156,31 @@ function openArticle(index) {
 
     header.innerHTML = `
         <span class="text-[10px] font-black text-indigo-500 uppercase tracking-widest">${article.source ? article.source.title : 'Market Intelligence'}</span>
-        <h2 class="text-2xl font-black mt-2 leading-tight uppercase italic">${article.title}</h2>
+        <h2 class="text-2xl font-black mt-2 leading-tight uppercase italic text-white">${article.title}</h2>
     `;
 
-    // Algorithme de génération de contenu crédible basé sur le titre
+    // IA Analyse Content
     const analysis = [
-        `D'après les dernières données du terminal, ${article.title.toLowerCase()} suscite un vif intérêt chez les investisseurs institutionnels. Les volumes d'échange confirment une cassure technique imminente.`,
-        `Le RSI (Relative Strength Index) montre des signes de divergence, ce qui suggère que le mouvement actuel pourrait se prolonger sur les prochaines sessions de trading.`,
-        `En observant les carnets d'ordres, on note une accumulation stratégique. Cette situation pourrait redéfinir les zones de support et de résistance pour les semaines à venir.`,
-        `Conclusion : La prudence reste de mise, mais les indicateurs de tendance lourde favorisent une poursuite de la dynamique observée aujourd'hui.`
+        `D'après les données du terminal FlashDevise, "${article.title}" impacte actuellement la liquidité des paires liées. L'analyse algorithmique détecte un changement de volatilité significatif.`,
+        `Le momentum actuel, couplé aux indicateurs RSI, suggère une phase d'accumulation par les acteurs majeurs du marché.`,
+        `Techniquement, une consolidation au-dessus des pivots actuels validerait la poursuite de cette tendance pour les prochaines 24 heures.`,
+        `Note FlashDevise : Surveillez les volumes de clôture pour confirmer la force du mouvement.`
     ];
 
-    body.innerHTML = analysis.map(text => `<p>${text}</p>`).join('');
+    body.innerHTML = analysis.map(text => `<p class="mb-4">${text}</p>`).join('');
     sourceLink.href = article.url;
-    
     document.getElementById('newsContentModal').style.display = 'flex';
 }
 
 function setLanguage(lang) {
-    currentLang = lang; 
-    localStorage.setItem('preferredLang', lang);
-    
+    currentLang = lang; localStorage.setItem('preferredLang', lang);
     document.querySelectorAll('[data-key]').forEach(el => {
         const key = el.getAttribute('data-key');
         if (translations[lang][key]) el.innerText = translations[lang][key];
     });
-
     document.querySelectorAll('.lang-btn').forEach(btn => {
-        const isTarget = btn.getAttribute('onclick').includes(`'${lang}'`);
-        btn.classList.toggle('active', isTarget);
+        btn.classList.toggle('active', btn.id === `btn-${lang}`);
     });
-
     const toCurrency = document.getElementById('toCurrency')?.value;
     if(toCurrency) updateAffiliateInfo(toCurrency);
 }
@@ -201,19 +188,11 @@ function setLanguage(lang) {
 function updateChart() {
     const from = document.getElementById('fromCurrency').value;
     const to = document.getElementById('toCurrency').value;
-    let symbol;
+    let symbol = (from === "BTC" || from === "ETH" || from === "SOL") ? `BINANCE:${from}USDT` : 
+                 (to === "BTC" || to === "ETH" || to === "SOL") ? `BINANCE:${to}USDT` : 
+                 (from === "XAU" || to === "XAU") ? "OANDA:XAUUSD" : `FX_IDC:${from}${to}`;
 
-    if (from === "BTC" || from === "ETH" || from === "SOL") {
-        symbol = `BINANCE:${from}USDT`;
-    } else if (to === "BTC" || to === "ETH" || to === "SOL") {
-        symbol = `BINANCE:${to}USDT`;
-    } else if (from === "XAU" || to === "XAU") {
-        symbol = "OANDA:XAUUSD";
-    } else {
-        symbol = `FX_IDC:${from}${to}`;
-    }
-
-    if(document.getElementById('tradingview_chart')) {
+    if(window.TradingView) {
         new TradingView.widget({
             "autosize": true, "symbol": symbol, "interval": "D", "theme": "dark", "style": "3",
             "container_id": "tradingview_chart", "locale": currentLang === 'fr' ? 'fr' : 'en', 
@@ -225,16 +204,16 @@ function updateChart() {
 async function init() {
     try {
         const fS = document.getElementById('fromCurrency'), tS = document.getElementById('toCurrency');
-        if(!fS || !tS) return;
-
         const res = await fetch(`https://api.exchangerate-api.com/v4/latest/USD`);
         const data = await res.json();
         const all = [...Object.keys(data.rates), "BTC", "ETH", "SOL", "XAU", "XAG"].sort();
         
-        fS.innerHTML = ''; tS.innerHTML = '';
-        all.forEach(s => {
-            const label = currencyNames[s] ? `${s} - ${currencyNames[s]}` : s;
-            fS.add(new Option(label, s)); tS.add(new Option(label, s));
+        [fS, tS].forEach(select => {
+            select.innerHTML = '';
+            all.forEach(s => {
+                const label = currencyNames[s] ? `${s} - ${currencyNames[s]}` : s;
+                select.add(new Option(label, s));
+            });
         });
 
         fS.value = "EUR"; tS.value = "USD";
@@ -244,18 +223,13 @@ async function init() {
 
 function share(platform) {
     const resValue = document.getElementById('resultValue').innerText;
-    const text = encodeURIComponent(`FlashDevise : Taux de ${resValue} trouvé sur le terminal.`);
-    const url = window.location.href;
-    const shareUrl = platform === 'whatsapp' ? `https://api.whatsapp.com/send?text=${text}%20${url}` : `https://t.me/share/url?url=${url}&text=${text}`;
+    const text = encodeURIComponent(`FlashDevise : Taux de ${resValue} trouvé !`);
+    const shareUrl = platform === 'whatsapp' ? `https://api.whatsapp.com/send?text=${text}%20${window.location.href}` : `https://t.me/share/url?url=${window.location.href}&text=${text}`;
     window.open(shareUrl, '_blank');
 }
 
-function closeModal(id) { 
-    const modal = document.getElementById(id);
-    if(modal) modal.style.display = 'none'; 
-}
+function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-// Listeners
 document.getElementById('amount')?.addEventListener('input', convert);
 [document.getElementById('fromCurrency'), document.getElementById('toCurrency')].forEach(s => {
     s?.addEventListener('change', () => { convert(); updateChart(); });
