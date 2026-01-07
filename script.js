@@ -71,7 +71,6 @@ async function convert() {
     const to = document.getElementById('toCurrency').value;
     
     if (!amount || amount <= 0) return;
-    
     updateAffiliateInfo(to);
     
     try {
@@ -85,8 +84,8 @@ async function convert() {
                 const d = await r.json(); 
                 return d[c.id].usd;
             }
-            if(s === "XAU") return 2050; // Fallback Gold Price
-            if(s === "XAG") return 23.50; // Fallback Silver Price
+            if(s === "XAU") return 2050;
+            if(s === "XAG") return 23.50;
             return 1 / data.rates[s];
         };
 
@@ -97,7 +96,6 @@ async function convert() {
         document.getElementById('resultValue').innerText = (amount * rate).toLocaleString(undefined, {maximumFractionDigits: 2}) + " " + to;
         document.getElementById('baseText').innerText = `1 ${from} = ${rate.toFixed(4)} ${to}`;
         
-        // Affichage du modal après un court délai
         setTimeout(() => {
             const modal = document.getElementById('shareModal');
             if(modal) modal.style.display = 'flex';
@@ -115,34 +113,48 @@ async function fetchNews() {
 
     try {
         const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://cryptopanic.com/api/v1/posts/?public=true')}`);
+        if (!res.ok) throw new Error();
         const data = await res.json();
         const posts = JSON.parse(data.contents).results.slice(0, 8);
-
-        container.innerHTML = posts.map(p => {
-            const titleLower = p.title.toLowerCase();
-            const isBearish = titleLower.includes('drop') || titleLower.includes('crash') || titleLower.includes('down') || titleLower.includes('bear');
-            const sentimentClass = isBearish ? 'sentiment-down' : 'sentiment-up';
-            const sentimentText = isBearish ? 'BEARISH' : 'BULLISH';
-            
-            return `
-                <div class="news-card glass p-6 rounded-[2rem] border border-white/5 flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-center mb-4">
-                            <span class="text-[8px] font-black text-indigo-400 uppercase tracking-tighter">${p.source.title}</span>
-                            <span class="text-[8px] font-bold px-2 py-1 rounded-full ${sentimentClass}">${sentimentText}</span>
-                        </div>
-                        <h4 class="text-[12px] font-bold leading-relaxed text-slate-200 line-clamp-3">${p.title}</h4>
-                    </div>
-                    <a href="${p.url}" target="_blank" class="text-[9px] text-indigo-500 font-black mt-4 hover:text-white transition">VOIR PLUS →</a>
-                </div>
-            `;
-        }).join('');
-        
-        if(ticker) ticker.innerText = " • " + posts.map(p => p.title.toUpperCase()).join(' • ');
+        renderNewsContent(posts);
     } catch (e) { 
-        console.log("News fetch error");
-        container.innerHTML = `<p class="col-span-full text-center text-slate-500 text-xs uppercase font-bold">Flux temporairement indisponible</p>`;
+        console.log("News fetch error, loading backup...");
+        // BACKUP SYSTEM : News statiques de secours si l'API échoue
+        const backupPosts = [
+            { title: "Volumes d'échange en hausse sur les paires EUR/USD", source: {title: "Market Insight"}, url: "#" },
+            { title: "Analyse technique : Résistance majeure sur le Bitcoin à 95k", source: {title: "Crypto Daily"}, url: "#" },
+            { title: "L'inflation zone euro influence les taux de change directs", source: {title: "FlashDevise"}, url: "#" },
+            { title: "Nouveaux sommets pour l'Or face à l'incertitude monétaire", source: {title: "Finance Live"}, url: "#" }
+        ];
+        renderNewsContent(backupPosts);
     }
+}
+
+function renderNewsContent(posts) {
+    const container = document.getElementById('news-container');
+    const ticker = document.getElementById('ticker');
+    
+    container.innerHTML = posts.map(p => {
+        const titleLower = p.title.toLowerCase();
+        const isBearish = titleLower.includes('drop') || titleLower.includes('crash') || titleLower.includes('down') || titleLower.includes('bear') || titleLower.includes('baisse');
+        const sentimentClass = isBearish ? 'sentiment-down' : 'sentiment-up';
+        const sentimentText = isBearish ? 'BEARISH' : 'BULLISH';
+        
+        return `
+            <div class="news-card glass p-6 rounded-[2rem] border border-white/5 flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-[8px] font-black text-indigo-400 uppercase tracking-tighter">${p.source ? p.source.title : 'Market'}</span>
+                        <span class="text-[8px] font-bold px-2 py-1 rounded-full ${sentimentClass}">${sentimentText}</span>
+                    </div>
+                    <h4 class="text-[12px] font-bold leading-relaxed text-slate-200 line-clamp-3">${p.title}</h4>
+                </div>
+                <a href="${p.url}" target="_blank" class="text-[9px] text-indigo-500 font-black mt-4 hover:text-white transition uppercase">VOIR PLUS →</a>
+            </div>
+        `;
+    }).join('');
+    
+    if(ticker) ticker.innerText = " • " + posts.map(p => p.title.toUpperCase()).join(' • ');
 }
 
 function setLanguage(lang) {
@@ -154,12 +166,11 @@ function setLanguage(lang) {
         if (translations[lang][key]) el.innerText = translations[lang][key];
     });
 
-    // Mise à jour visuelle des boutons de langue
     document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.getAttribute('onclick').includes(lang));
+        const isTarget = btn.getAttribute('onclick').includes(`'${lang}'`);
+        btn.classList.toggle('active', isTarget);
     });
 
-    // Rafraîchir les textes d'affiliation
     const toCurrency = document.getElementById('toCurrency')?.value;
     if(toCurrency) updateAffiliateInfo(toCurrency);
 }
@@ -169,7 +180,6 @@ function updateChart() {
     const to = document.getElementById('toCurrency').value;
     let symbol;
 
-    // Logique de sélection de symbole TradingView
     if (from === "BTC" || from === "ETH" || from === "SOL") {
         symbol = `BINANCE:${from}USDT`;
     } else if (to === "BTC" || to === "ETH" || to === "SOL") {
@@ -203,19 +213,15 @@ async function init() {
 
         const res = await fetch(`https://api.exchangerate-api.com/v4/latest/USD`);
         const data = await res.json();
-        
         const all = [...Object.keys(data.rates), "BTC", "ETH", "SOL", "XAU", "XAG"].sort();
         
-        // Nettoyer les selects avant remplissage
         fS.innerHTML = ''; tS.innerHTML = '';
-        
         all.forEach(s => {
             const label = currencyNames[s] ? `${s} - ${currencyNames[s]}` : s;
             fS.add(new Option(label, s)); 
             tS.add(new Option(label, s));
         });
 
-        // Valeurs par défaut
         fS.value = "EUR"; 
         tS.value = "USD";
         
@@ -229,8 +235,8 @@ async function init() {
 }
 
 function share(platform) {
-    const res = document.getElementById('resultValue').innerText;
-    const text = encodeURIComponent(`FlashDevise : Taux de ${res} trouvé sur le terminal.`);
+    const resValue = document.getElementById('resultValue').innerText;
+    const text = encodeURIComponent(`FlashDevise : Taux de ${resValue} trouvé sur le terminal.`);
     const url = window.location.href;
     const shareUrl = platform === 'whatsapp' 
         ? `https://api.whatsapp.com/send?text=${text}%20${url}` 
@@ -238,7 +244,6 @@ function share(platform) {
     window.open(shareUrl, '_blank');
 }
 
-// Listeners
 document.getElementById('amount')?.addEventListener('input', convert);
 [document.getElementById('fromCurrency'), document.getElementById('toCurrency')].forEach(s => {
     s?.addEventListener('change', () => { 
@@ -252,7 +257,5 @@ function closeModal() {
     if(modal) modal.style.display = 'none'; 
 }
 
-// Lancement
 init();
-// Refresh des news toutes les 10 minutes
 setInterval(fetchNews, 600000);
