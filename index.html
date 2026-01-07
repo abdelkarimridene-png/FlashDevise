@@ -30,12 +30,15 @@
         .sentiment-down { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
 
         @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-        .animate-marquee { display: inline-block; animation: marquee 40s linear infinite; white-space: nowrap; }
+        .animate-marquee { display: inline-block; animation: marquee 40s linear infinite; white-space: nowrap; width: max-content; }
         #shareModal { display: none; background: rgba(0,0,0,0.92); backdrop-filter: blur(10px); }
         .lang-btn { filter: grayscale(100%); transition: all 0.3s ease; opacity: 0.6; }
         .lang-btn:hover, .lang-btn.active { filter: grayscale(0%); opacity: 1; transform: scale(1.1); }
         
         .ad-container { background: rgba(255,255,255,0.02); border-radius: 1rem; overflow: hidden; display: flex; justify-content: center; align-items: center; border: 1px dashed rgba(255,255,255,0.05); }
+        
+        /* Utility for line clamping news titles */
+        .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
     </style>
 </head>
 <body class="p-4 md:p-8">
@@ -43,18 +46,18 @@
     <header class="max-w-[1400px] mx-auto flex justify-between items-center mb-10">
         <div class="text-xl font-black italic tracking-tighter uppercase">FLASH<span class="text-indigo-500">DEVISE</span></div>
         <nav class="hidden md:flex gap-8 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-            <a href="#dashboard" data-key="nav-dash">Marchés</a>
-            <a href="#about" data-key="nav-about">À Propos</a>
-            <a href="#news" data-key="nav-news">Analyses</a>
+            <a href="#dashboard" data-key="nav-dash" class="hover:text-indigo-400 transition">Marchés</a>
+            <a href="#about" data-key="nav-about" class="hover:text-indigo-400 transition">À Propos</a>
+            <a href="#news" data-key="nav-news" class="hover:text-indigo-400 transition">Analyses</a>
         </nav>
         
         <div class="flex gap-4 items-center bg-white/5 px-4 py-2 rounded-full border border-white/10">
-            <button onclick="setLanguage('fr')" class="lang-btn flex items-center gap-2">
+            <button onclick="setLanguage('fr')" id="btn-fr" class="lang-btn flex items-center gap-2">
                 <img src="https://flagcdn.com/w40/fr.png" width="20" class="rounded-full shadow-sm">
                 <span class="text-[10px] font-black">FR</span>
             </button>
             <div class="w-[1px] h-4 bg-white/10"></div>
-            <button onclick="setLanguage('en')" class="lang-btn flex items-center gap-2">
+            <button onclick="setLanguage('en')" id="btn-en" class="lang-btn flex items-center gap-2">
                 <img src="https://flagcdn.com/w40/gb.png" width="20" class="rounded-full shadow-sm">
                 <span class="text-[10px] font-black">EN</span>
             </button>
@@ -146,7 +149,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
                 <h2 class="text-3xl font-black uppercase mb-6" data-key="about-title">Transparence</h2>
-                <p class="text-slate-400 text-sm leading-relaxed" data-key="about-desc">Terminal indépendant fournissant des données neutres.</p>
+                <p class="text-slate-400 text-sm leading-relaxed" data-key="about-desc">Terminal indépendant fournissant des données neutres. Nous aidons les utilisateurs à identifier le taux de change réel.</p>
             </div>
             <div class="bg-white/5 p-8 rounded-[2.5rem] border border-white/5 text-center">
                 <h3 class="text-xs font-black uppercase text-indigo-400 mb-4" data-key="legal-title">Note Légale</h3>
@@ -159,15 +162,16 @@
 
     <div id="shareModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
         <div class="glass max-w-md w-full p-10 rounded-[3rem] border border-white/20 text-center relative shadow-2xl">
-            <button onclick="closeModal()" class="absolute top-6 right-6 text-slate-500 hover:text-white"><i class="fas fa-times"></i></button>
+            <button onclick="closeModal()" class="absolute top-6 right-6 text-slate-500 hover:text-white transition"><i class="fas fa-times"></i></button>
             <h2 class="text-2xl font-black mb-2" data-key="modal-title">Taux Prêt !</h2>
-            <p class="text-[11px] text-indigo-400 font-bold uppercase mb-8" data-key="modal-desc">Calcul effectué avec succès.</p>
+            <p class="text-[11px] text-indigo-400 font-bold uppercase mb-8" data-key="modal-desc">Le taux a été actualisé avec succès.</p>
             <div class="grid grid-cols-2 gap-4 mb-8">
                 <button onclick="share('whatsapp')" class="py-4 bg-[#25D366]/10 text-[#25D366] rounded-2xl font-bold text-[10px] uppercase hover:bg-[#25D366]/20 transition">WhatsApp</button>
                 <button onclick="share('telegram')" class="py-4 bg-[#0088cc]/10 text-[#0088cc] rounded-2xl font-bold text-[10px] uppercase hover:bg-[#0088cc]/20 transition">Telegram</button>
             </div>
             <a id="modalAffiliateLink" href="#" target="_blank" class="flex items-center justify-center gap-3 w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase shadow-xl hover:bg-indigo-500 transition px-6">
-                <div id="modalAffIcon"></div><span id="modalAffText">Continuer</span>
+                <div id="modalAffIcon"></div>
+                <span id="modalAffText">Continuer</span>
             </a>
         </div>
     </div>
