@@ -19,25 +19,26 @@
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #05070a; color: white; scroll-behavior: smooth; }
-        .glass { background: rgba(15, 20, 28, 0.95); border: 1px solid rgba(255, 255, 255, 0.08); }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #05070a; color: white; scroll-behavior: smooth; overflow-x: hidden; }
+        .glass { background: rgba(15, 20, 28, 0.95); border: 1px solid rgba(255, 255, 255, 0.08); backdrop-filter: blur(10px); }
         
         select { background-color: #1a1f26 !important; color: white !important; border: 1px solid rgba(255,255,255,0.1) !important; padding: 14px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; font-size: 13px; appearance: none; outline: none; }
         
-        .news-card { transition: all 0.3s ease; background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%); }
+        .news-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%); }
         .news-card:hover { transform: translateY(-5px); border-color: rgba(99, 102, 241, 0.4); background: rgba(255,255,255,0.06); }
         .sentiment-up { color: #10b981; background: rgba(16, 185, 129, 0.1); }
         .sentiment-down { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
 
         @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
         .animate-marquee { display: inline-block; animation: marquee 40s linear infinite; white-space: nowrap; width: max-content; }
-        #shareModal { display: none; background: rgba(0,0,0,0.92); backdrop-filter: blur(10px); }
+        
+        /* Modals */
+        #shareModal, #newsContentModal { display: none; background: rgba(0,0,0,0.95); backdrop-filter: blur(15px); }
+        
         .lang-btn { filter: grayscale(100%); transition: all 0.3s ease; opacity: 0.6; }
         .lang-btn:hover, .lang-btn.active { filter: grayscale(0%); opacity: 1; transform: scale(1.1); }
         
         .ad-container { background: rgba(255,255,255,0.02); border-radius: 1rem; overflow: hidden; display: flex; justify-content: center; align-items: center; border: 1px dashed rgba(255,255,255,0.05); }
-        
-        /* Utility for line clamping news titles */
         .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
     </style>
 </head>
@@ -75,6 +76,7 @@
     </div>
 
     <main id="dashboard" class="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
         <div class="lg:col-span-4 space-y-6">
             <div class="glass p-8 rounded-[2.5rem] border-indigo-500/10 shadow-2xl">
                 <h2 class="text-[10px] font-black uppercase text-slate-500 mb-8 tracking-widest text-center" data-key="calc-title">Convertisseur Universel</h2>
@@ -162,7 +164,7 @@
 
     <div id="shareModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
         <div class="glass max-w-md w-full p-10 rounded-[3rem] border border-white/20 text-center relative shadow-2xl">
-            <button onclick="closeModal()" class="absolute top-6 right-6 text-slate-500 hover:text-white transition"><i class="fas fa-times"></i></button>
+            <button onclick="closeModal('shareModal')" class="absolute top-6 right-6 text-slate-500 hover:text-white transition"><i class="fas fa-times"></i></button>
             <h2 class="text-2xl font-black mb-2" data-key="modal-title">Taux Prêt !</h2>
             <p class="text-[11px] text-indigo-400 font-bold uppercase mb-8" data-key="modal-desc">Le taux a été actualisé avec succès.</p>
             <div class="grid grid-cols-2 gap-4 mb-8">
@@ -173,6 +175,23 @@
                 <div id="modalAffIcon"></div>
                 <span id="modalAffText">Continuer</span>
             </a>
+        </div>
+    </div>
+
+    <div id="newsContentModal" class="fixed inset-0 z-[110] flex items-center justify-center p-4">
+        <div class="glass max-w-2xl w-full p-8 md:p-12 rounded-[3rem] relative border border-white/20 overflow-y-auto max-h-[90vh] shadow-2xl">
+            <button onclick="closeModal('newsContentModal')" class="absolute top-8 right-8 text-slate-500 hover:text-white transition text-xl"><i class="fas fa-times"></i></button>
+            
+            <div id="article-header" class="mb-8">
+                </div>
+            
+            <div id="article-body" class="text-slate-300 text-sm leading-relaxed space-y-4 font-medium uppercase tracking-tight">
+                </div>
+            
+            <div class="mt-10 pt-8 border-t border-white/10 flex flex-wrap gap-4">
+                <a id="source-link" href="#" target="_blank" class="px-8 py-4 bg-white/5 hover:bg-white/10 text-indigo-400 rounded-xl text-[10px] font-black uppercase tracking-widest transition border border-indigo-500/20">Lire la source originale</a>
+                <button onclick="closeModal('newsContentModal')" class="px-8 py-4 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition">Retour au Marché</button>
+            </div>
         </div>
     </div>
 
