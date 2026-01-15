@@ -6,7 +6,7 @@
     
     <title>FlashDevise | Convertisseur de Devises Temps Réel, Crypto & Métaux</title>
     <meta name="description" content="Accédez aux taux de change réels, prix du Bitcoin et cours de l'or en direct. Terminal financier avec analyses de marché IA et graphiques TradingView gratuits.">
-    <meta name="keywords" content="convertisseur devise, taux de change direct, cours du bitcoin, prix de l'or, forex, FlashDevise, finance terminal">
+    <meta name="keywords" content="convertisseur devise, taux de change direct, cours du bitcoin, prix de l'or, forex, FlashDevise, finance terminal, euro dinar algerien, euro dirham marocain">
     <link rel="canonical" href="https://flashdevise.com/" />
 
     <meta property="og:title" content="FlashDevise | Terminal Financier Temps Réel">
@@ -31,9 +31,6 @@
     </script>
     
     <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="shortcut icon" type="image/png" href="favicon.png">
-    <link rel="apple-touch-icon" href="favicon.png">
-
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1514465539874199" crossorigin="anonymous"></script>
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -57,6 +54,7 @@
         .ad-container { background: rgba(255,255,255,0.02); border-radius: 1rem; overflow: hidden; display: flex; justify-content: center; align-items: center; border: 1px dashed rgba(255,255,255,0.05); }
         .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
         .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0; }
+        .text-gradient { background: linear-gradient(to right, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     </style>
 </head>
 <body class="p-4 md:p-8">
@@ -66,8 +64,9 @@
         
         <nav class="hidden md:flex gap-8 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
             <a href="#dashboard" data-key="nav-dash" class="hover:text-indigo-400 transition">Marchés</a>
-            <a href="#about" data-key="nav-about" class="hover:text-indigo-400 transition">À Propos</a>
+            <a href="#expert-analysis" class="hover:text-indigo-400 transition">Expertise</a>
             <a href="#news" data-key="nav-news" class="hover:text-indigo-400 transition">Analyses</a>
+            <a href="#faq" class="hover:text-indigo-400 transition">FAQ</a>
         </nav>
         
         <div class="flex gap-4 items-center bg-white/5 px-4 py-2 rounded-full border border-white/10">
@@ -139,7 +138,21 @@
         </div>
     </main>
 
-    <section id="news" class="max-w-[1400px] mx-auto mt-24 pb-20 px-4">
+    <section id="expert-analysis" class="max-w-[1400px] mx-auto mt-24 glass p-10 rounded-[2.5rem] border-indigo-500/10">
+        <h2 class="text-3xl font-black uppercase italic mb-8 text-gradient">Expertise Marchés & Terminologie</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 text-slate-400 text-sm leading-relaxed">
+            <div class="space-y-4">
+                <p>Bienvenue sur le terminal <strong>FlashDevise</strong>, votre source de données indépendante pour le suivi des marchés financiers mondiaux. Nous fournissons des outils de conversion haute précision pour les devises fiat majeures, les monnaies émergentes comme le <strong>Dinar Algérien (DZD)</strong> et le <strong>Dirham Marocain (MAD)</strong>, ainsi que les actifs numériques.</p>
+                <p>Notre interface utilise des flux de données agrégés pour offrir une vision transparente du taux moyen du marché. Contrairement aux plateformes bancaires traditionnelles, FlashDevise permet de visualiser instantanément l'impact de la volatilité sur vos actifs via l'intégration de graphiques professionnels <strong>TradingView</strong>.</p>
+            </div>
+            <div class="space-y-4">
+                <p>En plus du Forex, notre terminal suit en temps réel le <strong>cours de l'Or (XAU)</strong> et de l'Argent, actifs essentiels pour la diversification de patrimoine. L'analyse des métaux précieux est mise à jour selon les cotations internationales de Londres et de New York.</p>
+                <p>Nous combinons technologie et accessibilité pour permettre à chacun d'analyser les tendances du <strong>Bitcoin (BTC)</strong> et des altcoins majeurs. Notre mission est d'éliminer l'opacité des taux de change pour offrir une expérience utilisateur fluide et sans frais cachés.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="news" class="max-w-[1400px] mx-auto mt-24 px-4">
         <div class="flex justify-between items-end mb-10">
             <header>
                 <h2 class="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-500 mb-2" data-key="news-title">Analyses & Flux News</h2>
@@ -150,18 +163,32 @@
                 <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Live Connection</span>
             </div>
         </div>
-        
-        <div id="news-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="sr-only">
-                <article>
-                    <h3>Analyse Forex et Crypto FlashDevise</h3>
-                    <p>Découvrez nos analyses en temps réel sur l'EUR/USD, le Bitcoin, l'Ethereum et le cours de l'Or. Nos algorithmes IA analysent les tendances de marché pour vous fournir les meilleurs taux de change.</p>
-                </article>
+        <div id="news-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+    </section>
+
+    <section id="faq" class="max-w-[1400px] mx-auto mt-24 glass p-10 rounded-[2.5rem]">
+        <h2 class="text-xl font-black uppercase italic mb-10 tracking-widest text-indigo-400">Foire Aux Questions</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div>
+                <h3 class="font-bold text-white mb-3 uppercase text-xs">Comment fonctionne le convertisseur FlashDevise ?</h3>
+                <p class="text-slate-400 text-xs leading-relaxed font-medium">Notre outil utilise des APIs de change connectées aux places boursières mondiales. Il calcule automatiquement le ratio entre deux devises en fonction de leur valeur en USD pour garantir un taux neutre et actualisé.</p>
+            </div>
+            <div>
+                <h3 class="font-bold text-white mb-3 uppercase text-xs">Pourquoi suivre le cours de l'or en direct ?</h3>
+                <p class="text-slate-400 text-xs leading-relaxed font-medium">L'or est une valeur refuge. En suivant le prix de l'once d'or (XAU) sur notre terminal, vous pouvez anticiper les baisses de pouvoir d'achat des monnaies fiat comme l'Euro ou le Dollar.</p>
+            </div>
+            <div>
+                <h3 class="font-bold text-white mb-3 uppercase text-xs">Le taux Euro Dinar est-il celui du Square ?</h3>
+                <p class="text-slate-400 text-xs leading-relaxed font-medium">FlashDevise fournit le taux de change officiel interbancaire. Pour les devises comme le Dinar Algérien (DZD), cela sert de base d'analyse comparative avec les marchés informels.</p>
+            </div>
+            <div>
+                <h3 class="font-bold text-white mb-3 uppercase text-xs">Peut-on analyser les cryptomonnaies ici ?</h3>
+                <p class="text-slate-400 text-xs leading-relaxed font-medium">Oui, grâce à notre intégration TradingView, vous pouvez appliquer des indicateurs techniques sur le Bitcoin (BTC), l'Ethereum (ETH) et le Solana (SOL) directement dans le graphique.</p>
             </div>
         </div>
     </section>
 
-    <footer id="about" class="max-w-[1400px] mx-auto py-20">
+    <footer id="about" class="max-w-[1400px] mx-auto py-20 border-t border-white/5 mt-20">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
                 <h2 class="text-3xl font-black uppercase mb-6" data-key="about-title">Transparence</h2>
@@ -170,26 +197,23 @@
             <div class="bg-white/5 p-8 rounded-[2.5rem] border border-white/5 text-center">
                 <h3 class="text-xs font-black uppercase text-indigo-400 mb-4" data-key="legal-title">Note Légale</h3>
                 <p class="text-[10px] text-slate-500 leading-loose uppercase font-bold mb-6" data-key="legal-note">Outil de consultation gratuit. Les taux sont fournis à titre informatif.</p>
-                <a href="politique.html" class="inline-block text-[9px] text-indigo-500 hover:text-white transition-all uppercase font-bold tracking-widest border-b border-indigo-500/20 pb-1">Politique de Confidentialité</a>
+                <div class="flex justify-center gap-6">
+                    <a href="politique.html" class="inline-block text-[9px] text-indigo-500 hover:text-white transition-all uppercase font-bold tracking-widest">Confidentialité</a>
+                    <a href="mailto:contact@flashdevise.com" class="inline-block text-[9px] text-indigo-500 hover:text-white transition-all uppercase font-bold tracking-widest">Contact</a>
+                </div>
             </div>
         </div>
-        <p class="text-center mt-20 text-[9px] font-bold text-slate-600 uppercase tracking-widest opacity-40">© 2026 FLASHDEVISE • TERMINAL DATA</p>
+        <p class="text-center mt-20 text-[9px] font-bold text-slate-600 uppercase tracking-widest opacity-40">© 2026 FLASHDEVISE • TERMINAL DATA SYSTEMS</p>
     </footer>
 
     <div id="shareModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
         <div class="glass max-w-md w-full p-10 rounded-[3rem] border border-white/20 text-center relative shadow-2xl">
-            <button onclick="closeModal('shareModal')" class="absolute top-6 right-6 text-slate-500 hover:text-white transition" aria-label="Fermer">
-                <i class="fas fa-times text-lg"></i>
-            </button>
+            <button onclick="closeModal('shareModal')" class="absolute top-6 right-6 text-slate-500 hover:text-white transition"><i class="fas fa-times text-lg"></i></button>
             <h2 class="text-2xl font-black mb-2" data-key="modal-title">Taux Prêt !</h2>
             <p class="text-[11px] text-indigo-400 font-bold uppercase mb-8" data-key="modal-desc">Le taux a été actualisé avec succès.</p>
             <div class="grid grid-cols-2 gap-4 mb-8">
-                <button onclick="share('whatsapp')" class="flex flex-col items-center gap-2 py-4 bg-[#25D366]/10 text-[#25D366] rounded-2xl font-bold text-[10px] uppercase hover:bg-[#25D366]/20 transition">
-                    <i class="fab fa-whatsapp text-2xl"></i> WhatsApp
-                </button>
-                <button onclick="share('telegram')" class="flex flex-col items-center gap-2 py-4 bg-[#0088cc]/10 text-[#0088cc] rounded-2xl font-bold text-[10px] uppercase hover:bg-[#0088cc]/20 transition">
-                    <i class="fab fa-telegram-plane text-2xl"></i> Telegram
-                </button>
+                <button onclick="share('whatsapp')" class="flex flex-col items-center gap-2 py-4 bg-[#25D366]/10 text-[#25D366] rounded-2xl font-bold text-[10px] uppercase hover:bg-[#25D366]/20 transition"><i class="fab fa-whatsapp text-2xl"></i> WhatsApp</button>
+                <button onclick="share('telegram')" class="flex flex-col items-center gap-2 py-4 bg-[#0088cc]/10 text-[#0088cc] rounded-2xl font-bold text-[10px] uppercase hover:bg-[#0088cc]/20 transition"><i class="fab fa-telegram-plane text-2xl"></i> Telegram</button>
             </div>
             <a id="modalAffiliateLink" href="#" target="_blank" class="flex items-center justify-center gap-3 w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase shadow-xl hover:bg-indigo-500 transition px-6">
                 <div id="modalAffIcon"></div>
@@ -200,14 +224,12 @@
 
     <div id="newsContentModal" class="fixed inset-0 z-[110] flex items-center justify-center p-4">
         <div class="glass max-w-2xl w-full p-8 md:p-12 rounded-[3rem] relative border border-white/20 overflow-y-auto max-h-[90vh] shadow-2xl">
-            <button onclick="closeModal('newsContentModal')" class="absolute top-8 right-8 text-slate-500 hover:text-white transition text-xl" aria-label="Fermer">
-                <i class="fas fa-times"></i>
-            </button>
+            <button onclick="closeModal('newsContentModal')" class="absolute top-8 right-8 text-slate-500 hover:text-white transition text-xl"><i class="fas fa-times"></i></button>
             <div id="article-header" class="mb-8"></div>
             <div id="article-body" class="text-slate-300 text-sm leading-relaxed space-y-4 font-medium uppercase tracking-tight"></div>
             <div class="mt-10 pt-8 border-t border-white/10 flex flex-wrap gap-4">
-                <a id="source-link" href="#" target="_blank" class="px-8 py-4 bg-white/5 hover:bg-white/10 text-indigo-400 rounded-xl text-[10px] font-black uppercase tracking-widest transition border border-indigo-500/20">Lire la source originale</a>
-                <button onclick="closeModal('newsContentModal')" class="px-8 py-4 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition">Retour au Marché</button>
+                <a id="source-link" href="#" target="_blank" class="px-8 py-4 bg-white/5 hover:bg-white/10 text-indigo-400 rounded-xl text-[10px] font-black uppercase tracking-widest transition border border-indigo-500/20">Lire la source</a>
+                <button onclick="closeModal('newsContentModal')" class="px-8 py-4 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition">Retour</button>
             </div>
         </div>
     </div>
@@ -215,5 +237,3 @@
     <script src="script.js"></script>
 </body>
 </html>
-
-
