@@ -15,8 +15,12 @@
         .sentiment-up { color: #10b981; background: rgba(16, 185, 129, 0.1); }
         .sentiment-down { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
         #shareModal, #newsContentModal { display: none; background: rgba(0,0,0,0.95); backdrop-filter: blur(15px); }
-        .animate-marquee { display: inline-block; animation: marquee 40s linear infinite; white-space: nowrap; width: max-content; }
+        .animate-marquee { display: inline-block; animation: marquee 60s linear infinite; white-space: nowrap; width: max-content; }
         @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        
+        /* News Card Hover Effect */
+        .news-card { transition: all 0.3s ease; border: 1px solid rgba(255,255,255,0.05); }
+        .news-card:hover { transform: translateY(-5px); border-color: rgba(99, 102, 241, 0.4); background: rgba(20, 25, 35, 0.98); }
     </style>
 </head>
 <body class="p-4 md:p-8">
@@ -24,13 +28,13 @@
     <header class="max-w-[1400px] mx-auto flex justify-between items-center mb-10">
         <h1 class="text-xl font-black italic tracking-tighter uppercase">FLASH<span class="text-indigo-500">DEVISE</span></h1>
         <nav class="hidden md:flex gap-8 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-            <a href="#dashboard" data-key="nav-dash">Marchés</a>
-            <a href="#academy">Academy</a>
-            <a href="#news" data-key="nav-news">Analyses</a>
+            <a href="#dashboard" class="hover:text-white transition">Marchés</a>
+            <a href="#academy" class="hover:text-white transition">Academy</a>
+            <a href="#news" class="hover:text-white transition">Analyses</a>
         </nav>
         <div class="flex gap-4">
-            <button onclick="setLanguage('fr')" class="text-[10px] font-black">FR</button>
-            <button onclick="setLanguage('en')" class="text-[10px] font-black">EN</button>
+            <button onclick="setLanguage('fr')" class="text-[10px] font-black hover:text-indigo-500">FR</button>
+            <button onclick="setLanguage('en')" class="text-[10px] font-black hover:text-indigo-500">EN</button>
         </div>
     </header>
 
@@ -39,7 +43,7 @@
             <section class="glass p-8 rounded-[2.5rem] border-indigo-500/10 shadow-2xl">
                 <h2 class="text-[10px] font-black uppercase text-slate-500 mb-8 tracking-widest text-center" data-key="calc-title">Convertisseur Universel</h2>
                 <div class="space-y-6">
-                    <input type="number" id="amount" value="1000" class="w-full bg-black/40 border border-white/10 p-5 rounded-2xl text-3xl font-black text-center outline-none focus:border-indigo-500/50">
+                    <input type="number" id="amount" value="1000" class="w-full bg-black/40 border border-white/10 p-5 rounded-2xl text-3xl font-black text-center outline-none focus:border-indigo-500/50 text-white">
                     <div class="space-y-3">
                         <select id="fromCurrency"></select>
                         <select id="toCurrency"></select>
@@ -50,19 +54,20 @@
                     </div>
                 </div>
             </section>
-            <section class="glass p-8 rounded-[2.5rem] bg-indigo-500/5 text-center">
+            <section class="glass p-8 rounded-[2.5rem] bg-indigo-500/5 text-center border border-white/5">
                 <h3 class="text-[10px] font-black text-indigo-300 uppercase mb-4" data-key="aff-title">Meilleure Exécution</h3>
-                <a id="mainAffiliateLink" href="#" target="_blank" class="flex items-center justify-center gap-3 w-full py-4 bg-white text-black text-[11px] font-black uppercase rounded-xl shadow-lg">
+                <a id="mainAffiliateLink" href="#" target="_blank" class="flex items-center justify-center gap-3 w-full py-4 bg-white text-black text-[11px] font-black uppercase rounded-xl shadow-lg hover:bg-slate-200 transition">
                     <div id="mainAffIcon"></div>
                     <span id="mainAffText">Chargement...</span>
                 </a>
             </section>
         </div>
+
         <div class="lg:col-span-8">
             <div class="glass rounded-[2.5rem] overflow-hidden h-[600px] border border-white/5 relative">
                 <div id="tradingview_chart" class="h-full"></div>
-                <div class="absolute bottom-0 w-full bg-black/80 backdrop-blur-md py-3 border-t border-white/5 overflow-hidden">
-                    <div id="ticker" class="animate-marquee text-[9px] font-bold text-slate-500 uppercase italic">SYNCHRONISATION...</div>
+                <div class="absolute bottom-0 w-full bg-black/90 backdrop-blur-md py-3 border-t border-white/5 overflow-hidden">
+                    <div id="ticker" class="animate-marquee text-[9px] font-bold text-indigo-400 uppercase italic">INITIALISATION DU FLUX GLOBAL...</div>
                 </div>
             </div>
         </div>
@@ -71,23 +76,33 @@
     <section id="academy" class="max-w-[1400px] mx-auto mt-32 px-4">
         <header class="mb-12 border-b border-white/5 pb-8">
             <h2 class="text-5xl font-black uppercase italic tracking-tighter">FlashDevise <span class="text-indigo-500">Academy</span></h2>
-            <p class="text-slate-500 mt-2 font-bold uppercase text-[10px] tracking-[0.5em]">20 000 mots d'expertise financière</p>
+            <p class="text-slate-500 mt-2 font-bold uppercase text-[10px] tracking-[0.5em]">L'Intelligence Financière en accès libre</p>
         </header>
         <div id="expert-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
     </section>
 
-    <section id="news" class="max-w-[1400px] mx-auto mt-24 px-4">
-        <h2 class="text-2xl font-black uppercase italic mb-10">Market Intelligence</h2>
-        <div id="news-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+    <section id="news" class="max-w-[1400px] mx-auto mt-32 px-4">
+        <div class="flex justify-between items-end mb-10">
+            <div>
+                <h2 class="text-2xl font-black uppercase italic">Market Intelligence</h2>
+                <div class="h-1 w-20 bg-indigo-500 mt-2"></div>
+            </div>
+            <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Sources: Bloomberg, Reuters, CNBC</p>
+        </div>
+        <div id="news-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
     </section>
 
     <footer class="max-w-[1400px] mx-auto py-20 border-t border-white/5 mt-20 text-center">
-        <p class="text-[9px] font-bold text-slate-600 uppercase tracking-widest opacity-40">© 2026 FLASHDEVISE • TERMINAL DATA SYSTEMS</p>
+        <div class="flex justify-center gap-8 mb-8 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+            <a href="javascript:void(0)" onclick="openLegal('privacy')" class="hover:text-indigo-400 transition">Confidentialité</a>
+            <a href="javascript:void(0)" onclick="openLegal('terms')" class="hover:text-indigo-400 transition">Mentions Légales</a>
+        </div>
+        <p class="text-[9px] font-bold text-slate-600 uppercase tracking-widest opacity-40">© 2026 FLASHDEVISE • TOUS DROITS RÉSERVÉS</p>
     </footer>
 
     <div id="shareModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
-        <div class="glass max-w-md w-full p-10 rounded-[3rem] text-center relative shadow-2xl">
-            <button onclick="closeModal('shareModal')" class="absolute top-6 right-6 text-slate-500"><i class="fas fa-times"></i></button>
+        <div class="glass max-w-md w-full p-10 rounded-[3rem] text-center relative shadow-2xl border border-white/10">
+            <button onclick="closeModal('shareModal')" class="absolute top-6 right-6 text-slate-500 hover:text-white"><i class="fas fa-times"></i></button>
             <h2 class="text-2xl font-black mb-2" data-key="modal-title">Taux Prêt !</h2>
             <p class="text-[11px] text-indigo-400 font-bold uppercase mb-8" data-key="modal-desc">Actualisé avec succès.</p>
             <div class="grid grid-cols-2 gap-4">
@@ -99,25 +114,16 @@
 
     <div id="newsContentModal" class="fixed inset-0 z-[110] flex items-center justify-center p-4">
         <div class="glass max-w-2xl w-full p-8 md:p-12 rounded-[3rem] relative border border-white/20 overflow-y-auto max-h-[90vh] shadow-2xl">
-            <button onclick="closeModal('newsContentModal')" class="absolute top-8 right-8 text-slate-500 text-xl"><i class="fas fa-times"></i></button>
+            <button onclick="closeModal('newsContentModal')" class="absolute top-8 right-8 text-slate-500 text-xl hover:text-white"><i class="fas fa-times"></i></button>
             <div id="article-header" class="mb-8"></div>
             <div id="article-body" class="text-slate-300 text-sm leading-relaxed space-y-4 font-medium uppercase tracking-tight"></div>
             <div class="mt-10 pt-8 border-t border-white/10 flex gap-4">
-                <a id="source-link" href="#" target="_blank" class="px-8 py-4 bg-white/5 text-indigo-400 rounded-xl text-[10px] font-black uppercase tracking-widest">Source</a>
-                <button onclick="closeModal('newsContentModal')" class="px-8 py-4 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest">Retour</button>
+                <a id="source-link" href="#" target="_blank" class="px-8 py-4 bg-white/5 text-indigo-400 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10">Lire la Source</a>
+                <button onclick="closeModal('newsContentModal')" class="px-8 py-4 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest">Fermer</button>
             </div>
         </div>
     </div>
 
     <script src="script.js"></script>
 </body>
-<footer class="max-w-[1400px] mx-auto py-20 border-t border-white/5 mt-20 text-center">
-    <div class="flex justify-center gap-8 mb-6 text-[9px] font-bold text-slate-500 uppercase tracking-widest">
-        <a href="javascript:void(0)" onclick="openLegal('privacy')" class="hover:text-indigo-400 transition">Politique de Confidentialité</a>
-        <a href="javascript:void(0)" onclick="openLegal('terms')" class="hover:text-indigo-400 transition">Mentions Légales</a>
-    </div>
-    <p class="text-[9px] font-bold text-slate-600 uppercase tracking-widest opacity-40">
-        © 2026 FLASHDEVISE • TERMINAL DATA SYSTEMS
-    </p>
-</footer>
 </html>
