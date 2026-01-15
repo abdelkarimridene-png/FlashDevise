@@ -415,6 +415,32 @@ const expertArticles = [
     }
 ];
 
+const legalPages = {
+    privacy: {
+        title: "Politique de Confidentialité",
+        content: `
+            <div class="space-y-6 text-slate-300">
+                <p>Chez <strong>FlashDevise</strong>, la protection de vos données est notre priorité absolue. Nous collectons uniquement les données nécessaires au bon fonctionnement du terminal.</p>
+                <h3 class="text-white font-bold">1. Collecte des données</h3>
+                <p>Nous ne collectons aucune information personnelle identifiable sans votre consentement. Les adresses IP sont anonymisées pour les statistiques de visite.</p>
+                <h3 class="text-white font-bold">2. Cookies</h3>
+                <p>Nous utilisons des cookies techniques pour mémoriser vos préférences de devises et de langue.</p>
+            </div>
+        `
+    },
+    terms: {
+        title: "Mentions Légales",
+        content: `
+            <div class="space-y-6 text-slate-300">
+                <p>Le site FlashDevise est un outil de consultation indépendant.</p>
+                <h3 class="text-white font-bold">Responsabilité</h3>
+                <p>Les taux de change sont fournis à titre indicatif. FlashDevise ne peut être tenu responsable des pertes financières liées à l'utilisation de ces données.</p>
+                <h3 class="text-white font-bold">Hébergement</h3>
+                <p>Ce terminal est hébergé sur des infrastructures sécurisées de haute disponibilité.</p>
+            </div>
+        `
+    }
+};
 const cryptos = [{id:"bitcoin", symbol:"BTC"}, {id:"ethereum", symbol:"ETH"}, {id:"solana", symbol:"SOL"}];
 const metals = [{id:"gold", symbol:"XAU"}, {id:"silver", symbol:"XAG"}];
 let currentLang = localStorage.getItem('preferredLang') || 'fr';
@@ -611,5 +637,6 @@ document.getElementById('amount')?.addEventListener('input', convert);
 
 init();
 setInterval(fetchNews, 600000);
+
 
 
