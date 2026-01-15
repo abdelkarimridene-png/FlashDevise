@@ -628,6 +628,26 @@ async function init() {
     } catch (e) { console.error("Init Error:", e); }
 }
 
+// Fonction pour ouvrir les pages juridiques dans la modale d'articles existante
+function openLegal(pageKey) {
+    const page = legalPages[pageKey];
+    if (!page) return;
+
+    const header = document.getElementById('article-header');
+    const body = document.getElementById('article-body');
+    const sourceLink = document.getElementById('source-link');
+
+    // On remplit la modale avec les données juridiques
+    header.innerHTML = `<h2 class="text-3xl font-black uppercase italic">${page.title}</h2>`;
+    body.innerHTML = page.content;
+    
+    // On cache le bouton "Source" qui n'est pas utile ici
+    sourceLink.style.display = 'none';
+
+    // On affiche la modale
+    document.getElementById('newsContentModal').style.display = 'flex';
+}
+
 function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
 document.getElementById('amount')?.addEventListener('input', convert);
@@ -637,6 +657,7 @@ document.getElementById('amount')?.addEventListener('input', convert);
 
 init();
 setInterval(fetchNews, 600000);
+
 
 
 
