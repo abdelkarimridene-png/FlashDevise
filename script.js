@@ -125,7 +125,6 @@ function renderNewsContent(posts) {
     const ticker = document.getElementById('ticker');
     if(!container) return;
 
-    // Sémantique HTML5 <article> pour Google News / AI
     container.innerHTML = posts.map((p, index) => {
         const titleLower = p.title.toLowerCase();
         const isBearish = titleLower.match(/(drop|crash|down|bear|baisse|low|fall)/);
@@ -155,7 +154,6 @@ function openArticle(index) {
     const body = document.getElementById('article-body');
     const sourceLink = document.getElementById('source-link');
 
-    // Mise à jour du titre de la page pour le SEO social
     document.title = `${article.title} | Analyse FlashDevise`;
 
     header.innerHTML = `
@@ -163,7 +161,6 @@ function openArticle(index) {
         <h2 class="text-2xl font-black mt-2 leading-tight uppercase italic text-white">${article.title}</h2>
     `;
 
-    // Prompt IA simulé avec mots-clés riches (Sémantique finance)
     const analysis = [
         `D'après les données du terminal FlashDevise, "${article.title}" impacte actuellement la liquidité des paires liées. L'analyse algorithmique détecte un changement de volatilité significatif sur le marché Forex/Crypto.`,
         `Le momentum actuel, couplé aux indicateurs RSI et aux zones de support/résistance, suggère une phase d'accumulation stratégique.`,
@@ -184,8 +181,6 @@ function setLanguage(lang) {
     });
     document.querySelectorAll('.lang-btn').forEach(btn => {
         btn.classList.toggle('active', btn.id === `btn-${lang}`);
-        const img = btn.querySelector('img');
-        if(img) img.alt = lang === 'fr' ? 'Français' : 'English';
     });
     const toCurrency = document.getElementById('toCurrency')?.value;
     if(toCurrency) updateAffiliateInfo(toCurrency);
@@ -222,7 +217,7 @@ async function init() {
             });
         });
 
-        fS.value = "EUR"; tS.value = "USD";
+        fS.value = "EUR"; tS.value = "DZD";
         setLanguage(currentLang); fetchNews(); convert(); updateChart();
     } catch (e) { console.error("Init Error:", e); }
 }
@@ -236,7 +231,6 @@ function share(platform) {
 
 function closeModal(id) { 
     document.getElementById(id).style.display = 'none';
-    // Reset du titre de la page lors de la fermeture d'une news
     document.title = "FlashDevise | Convertisseur de Devises Temps Réel, Crypto & Métaux";
 }
 
