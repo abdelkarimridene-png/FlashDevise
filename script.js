@@ -510,15 +510,60 @@ async function convert() {
 
 async function fetchNews() {
     try {
-        const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://cryptopanic.com/api/v1/posts/?public=true')}`);
-        const data = await res.json();
-        currentNews = JSON.parse(data.contents).results.slice(0, 8);
-        renderNewsContent(currentNews);
-    } catch (e) { 
-        currentNews = [
-            { title: "Volumes d'échange en hausse sur les paires EUR/USD", source: {title: "Market Insight"}, url: "#" },
-            { title: "Analyse technique : Résistance majeure sur le Bitcoin", source: {title: "Crypto Daily"}, url: "#" }
+        // Définition des sources (Focus : Crypto, Forex, Économie, Métaux)
+        const sources = [
+            { id: 'CRYPTOPANIC', url: 'https://cryptopanic.com/api/v1/posts/?public=true', type: 'json' },
+            { id: 'YAHOO', url: 'https://finance.yahoo.com/news/rssindex', type: 'xml', cat: 'GLOBAL' },
+            { id: 'FOREXLIVE', url: 'https://www.forexlive.com/rss', type: 'xml', cat: 'FOREX' },
+            { id: 'CNBC', url: 'https://search.cnbc.com/rs/search/view.xml?partnerId=2000&keywords=market', type: 'xml', cat: 'ECONOMY' },
+            { id: 'GOOGLE', url: 'https://news.google.com/rss/search?q=gold+market+commodity&hl=fr&gl=FR', type: 'xml', cat: 'COMMODITY' }
         ];
+
+        // Lancement de toutes les requêtes en parallèle via AllOrigins
+        const requests = sources.map(s => 
+            fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(s.url)}`).then(r => r.json())
+        );
+
+        const responses = await Promise.all(requests);
+        let allArticles = [];
+
+        responses.forEach((res, index) => {
+            const sourceInfo = sources[index];
+            if (!res.contents) return;
+
+            if (sourceInfo.type === 'json') {
+                // Traitement CryptoPanic
+                const json = JSON.parse(res.contents);
+                const items = json.results.slice(0, 5).map(p => ({
+                    title: p.title,
+                    source: { title: p.source ? p.source.title : 'Crypto' },
+                    url: p.url,
+                    category: "CRYPTO"
+                }));
+                allArticles.push(...items);
+            } else {
+                // Traitement des flux RSS (XML)
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(res.contents, "text/xml");
+                const items = Array.from(xmlDoc.querySelectorAll("item")).slice(0, 5).map(item => ({
+                    title: item.querySelector("title").textContent,
+                    source: { title: sourceInfo.id },
+                    url: item.querySelector("link") ? item.querySelector("link").textContent : '#',
+                    category: sourceInfo.cat
+                }));
+                allArticles.push(...items);
+            }
+        });
+
+        // Mélange aléatoire pour ne pas avoir tous les articles de la même source groupés
+        currentNews = allArticles.sort(() => Math.random() - 0.5).slice(0, 16);
+
+        renderNewsContent(currentNews);
+
+    } catch (e) {
+        console.error("Erreur multicast news:", e);
+        // Fallback minimal
+        currentNews = [{ title: "Marchés en attente de données macroéconomiques", source: {title: "Terminal"}, category: "SYSTEM" }];
         renderNewsContent(currentNews);
     }
 }
@@ -657,6 +702,7 @@ document.getElementById('amount')?.addEventListener('input', convert);
 
 init();
 setInterval(fetchNews, 600000);
+
 
 
 
