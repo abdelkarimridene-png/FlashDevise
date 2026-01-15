@@ -86,6 +86,7 @@ const expertArticles = [
                     <p class="text-xs">Les données présentées ici sont compilées à partir des rapports de la Banque d'Algérie, des observations de terrain sur les places de change informelles et des flux de données cryptographiques en temps réel. FlashDevise ne fournit pas de services de change physique mais des outils d'aide à la décision.</p>
                 </section>
             </div>
+			`
     },
     {
         id: "art2",
@@ -141,6 +142,7 @@ const expertArticles = [
                     <p class="text-xs text-slate-300">Posséder de l'or en 2026 n'est pas un pari spéculatif, c'est une stratégie de défense. Sur FlashDevise, nous recommandons une allocation de 5% à 15% d'un patrimoine en métaux précieux pour garantir une protection contre les chocs de volatilité des monnaies fiduciaires.</p>
                 </section>
             </div>
+			`
     },
     {
         id: "art3",
@@ -198,7 +200,8 @@ const expertArticles = [
                     <h4 class="font-bold text-white mb-2 uppercase text-sm">Conclusion : Une Révolution Irréversible</h4>
                     <p class="text-xs text-slate-300">Bitcoin et Ethereum ne sont plus des expériences technologiques, mais les fondations d'un nouveau système financier transparent, global et accessible 24h/24. FlashDevise continue de vous fournir les outils de conversion et d'analyse en temps réel pour maîtriser cette classe d'actifs en pleine expansion.</p>
                 </section>
-            </div>`
+            </div>
+			`
     },
     {
         id: "art4",
@@ -231,6 +234,7 @@ const expertArticles = [
                     <p class="text-xs text-slate-300">Le Dirham est une monnaie de confiance. Sa transition vers la flexibilité totale est surveillée de près par le FMI, faisant du Maroc un exemple de réussite économique en Afrique du Nord.</p>
                 </section>
             </div>
+			`
     },
     {
         id: "art5",
@@ -269,7 +273,8 @@ const expertArticles = [
                     <h4 class="font-bold text-white mb-2 uppercase text-sm">Règle d'Or du Forex :</h4>
                     <p class="text-xs text-slate-300">N'investissez jamais de l'argent que vous ne pouvez pas vous permettre de perdre. Utilisez les outils d'analyse de FlashDevise pour valider vos hypothèses avant toute exécution.</p>
                 </section>
-            </div>`
+            </div>
+			`
     },
     {
         id: "art6",
@@ -297,6 +302,7 @@ const expertArticles = [
                     <p class="text-xs text-slate-300">Surveillez l'indice des prix à la consommation (CPI). Si le rendement de votre épargne est inférieur à l'inflation, vous perdez de l'argent chaque jour. Utilisez notre convertisseur pour réallouer vos fonds vers des devises plus fortes ou des actifs de réserve.</p>
                 </section>
             </div>
+			`
     },
     {
         id: "art7",
@@ -320,6 +326,7 @@ const expertArticles = [
                     <p class="text-xs text-slate-300">La parité (1 EUR = 1 USD) reste un seuil psychologique majeur. Utilisez les graphiques TradingView intégrés à FlashDevise pour identifier les supports historiques de cette paire reine.</p>
                 </section>
             </div>
+			`
     },
     {
         id: "art8",
@@ -342,7 +349,8 @@ const expertArticles = [
                     <h4 class="font-bold text-white mb-2 uppercase text-sm">Focus Investisseur :</h4>
                     <p class="text-xs text-slate-300">La valeur du jeton SOL est liée à l'utilisation du réseau. Plus il y a d'applications et de transactions, plus la demande pour le SOL augmente. C'est l'actif phare pour ceux qui misent sur l'adoption de masse du Web3 en 2026.</p>
                 </section>
-            </div>`
+            </div>
+			`
     },
     {
         id: "art9",
@@ -375,6 +383,7 @@ const expertArticles = [
                     <p class="text-xs text-slate-300">La volatilité de l'argent est supérieure à celle de l'or. C'est un marché plus petit, plus facile à bouger, mais offrant des leviers de performance exceptionnels lors des marchés haussiers (bull markets).</p>
                 </section>
             </div>
+			`
     },
     {
         id: "art10",
@@ -402,6 +411,7 @@ const expertArticles = [
                     <p class="text-xs text-slate-300">Le futur financier sera hybride : un mélange de contrôle étatique via les CBDC et de liberté individuelle via les actifs décentralisés. FlashDevise restera votre terminal de confiance pour naviguer entre ces deux mondes, en vous fournissant les taux réels, quel que soit le support de la valeur.</p>
                 </section>
             </div>
+			`
     }
 ];
 
@@ -601,4 +611,5 @@ document.getElementById('amount')?.addEventListener('input', convert);
 
 init();
 setInterval(fetchNews, 600000);
+
 
